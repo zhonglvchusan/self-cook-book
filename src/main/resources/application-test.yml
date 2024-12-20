@@ -1,0 +1,11 @@
+# 应用服务 WEB 访问端口
+server:
+  port: 8181
+
+app:
+  id: self-cookbook-test
+apollo:
+  meta: http://www.zehui.wang:8880
+  bootstrap:
+    enabled: true
+    namespaces: application.yml

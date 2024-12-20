@@ -44,6 +44,12 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--   引入apollo     -->
+        <dependency>
+            <groupId>com.ctrip.framework.apollo</groupId>
+            <artifactId>apollo-client-config-data</artifactId>
+            <version>1.9.0</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -94,6 +100,39 @@
                 </executions>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/**</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
+
+    <profiles>
+        <profile>
+            <id>test</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <profile.name>test</profile.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profile.name>prod</profile.name>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
