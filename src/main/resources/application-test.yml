@@ -2,6 +2,7 @@
 server:
   port: 8181
 
+# apollo配置
 app:
   id: self-cookbook-test
 apollo:

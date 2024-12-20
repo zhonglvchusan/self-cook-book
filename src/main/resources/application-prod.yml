@@ -2,11 +2,12 @@
 server:
   port: 8081
 
-# spring 设置
-spring:
-  application:
-    name: self-cookbook
-mybatis:
-  type-aliases-package: wang.zehui.selfcookbookjava.entity
-  mapper-locations: "classpath:mappers/*xml"
+# apollo配置
+app:
+  id: self-cookbook-test
+apollo:
+  meta: http://www.zehui.wang:8880
+  bootstrap:
+    enabled: true
+    namespaces: application.yml
 
