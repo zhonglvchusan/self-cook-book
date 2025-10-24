@@ -6,7 +6,7 @@ server:
 app:
   id: self-cookbook-test
 apollo:
-  meta: http://www.zehui.wang:8880
+  meta: http://127.0.0.1:8880
   bootstrap:
     enabled: true
     namespaces: application.yml
