@@ -10,4 +10,6 @@ apollo:
   bootstrap:
     enabled: true
     namespaces: application.yml
+  access-key:
+    secret: ${apollo.key.secret.prod}
 
