@@ -3,30 +3,52 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>wang.zehui</groupId>
-    <artifactId>self-cookbook-java</artifactId>
+    <artifactId>self-cookbook-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>self-cookbook-java</name>
-    <description>self-cookbook-java</description>
+    <name>self-cookbook-api</name>
+    <description>self-cookbook-api</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>2.6.13</spring-boot.version>
         <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
+        <mybatis-plus.version>3.5.14</mybatis-plus.version>
+        <apollo.version>1.9.0</apollo.version>
+        <sa-token.version>1.39.0</sa-token.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-bom</artifactId>
+                <version>${mybatis-plus.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.alibaba.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
-<!--        </dependency>-->
         <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.2.2</version>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
         </dependency>
 
         <dependency>
@@ -48,34 +70,16 @@
         <dependency>
             <groupId>com.ctrip.framework.apollo</groupId>
             <artifactId>apollo-client-config-data</artifactId>
-            <version>1.9.0</version>
+            <version>${apollo.version}</version>
         </dependency>
         <!-- Sa-Token 权限认证，在线文档：https://sa-token.cc -->
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-spring-boot-starter</artifactId>
-            <version>1.39.0</version>
+            <version>${sa-token.version}</version>
         </dependency>
 
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>${spring-cloud-alibaba.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <plugins>
@@ -94,7 +98,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>wang.zehui.selfcookbookjava.SelfCookbookJavaApplication</mainClass>
+                    <mainClass>wang.zehui.self.cook.book.SelfCookbookApiApplication</mainClass>
                     <skip>true</skip>
                 </configuration>
                 <executions>
