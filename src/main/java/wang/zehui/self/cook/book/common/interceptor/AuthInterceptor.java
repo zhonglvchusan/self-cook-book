@@ -1,4 +1,4 @@
-package wang.zehui.self.cook.book.interceptor;
+package wang.zehui.self.cook.book.common.interceptor;
 
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.exception.SaTokenException;
@@ -12,14 +12,14 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import wang.zehui.self.cook.book.annoation.NoNeedLogin;
+import wang.zehui.self.cook.book.common.annoation.NoNeedLogin;
 import wang.zehui.self.cook.book.domain.request.UserRequest;
 import wang.zehui.self.cook.book.domain.response.ResponseDTO;
-import wang.zehui.self.cook.book.enums.ErrorCodeEnum;
-import wang.zehui.self.cook.book.enums.UserAdminFlagEnum;
+import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
+import wang.zehui.self.cook.book.common.enums.UserAdminFlagEnum;
 import wang.zehui.self.cook.book.service.IUserService;
-import wang.zehui.self.cook.book.utils.RequestUtil;
-import wang.zehui.self.cook.book.utils.ResponseUtil;
+import wang.zehui.self.cook.book.common.utils.RequestUtil;
+import wang.zehui.self.cook.book.common.utils.ResponseUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

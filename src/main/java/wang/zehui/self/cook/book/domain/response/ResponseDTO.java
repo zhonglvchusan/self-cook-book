@@ -2,7 +2,7 @@ package wang.zehui.self.cook.book.domain.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import wang.zehui.self.cook.book.enums.ErrorCodeEnum;
+import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
 
 /**
  * @Author wangzehui

@@ -1,4 +1,4 @@
-package wang.zehui.self.cook.book.enums;
+package wang.zehui.self.cook.book.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

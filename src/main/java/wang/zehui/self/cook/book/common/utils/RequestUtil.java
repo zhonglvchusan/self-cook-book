@@ -1,4 +1,4 @@
-package wang.zehui.self.cook.book.utils;
+package wang.zehui.self.cook.book.common.utils;
 
 import wang.zehui.self.cook.book.domain.request.UserRequest;
 

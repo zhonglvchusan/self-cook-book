@@ -1,4 +1,4 @@
-package wang.zehui.self.cook.book.annoation;
+package wang.zehui.self.cook.book.common.annoation;
 
 import java.lang.annotation.*;
 

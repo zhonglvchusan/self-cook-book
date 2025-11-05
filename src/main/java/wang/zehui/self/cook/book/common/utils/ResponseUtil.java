@@ -1,4 +1,4 @@
-package wang.zehui.self.cook.book.utils;
+package wang.zehui.self.cook.book.common.utils;
 
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;

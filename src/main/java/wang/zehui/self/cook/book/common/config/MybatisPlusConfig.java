@@ -1,4 +1,4 @@
-package wang.zehui.self.cook.book.config;
+package wang.zehui.self.cook.book.common.config;
 
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
