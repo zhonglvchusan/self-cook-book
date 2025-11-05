@@ -10,4 +10,5 @@ import lombok.Data;
 public class UserRequest {
 
     private String userId;
+    private Integer adminFlag;
 }
