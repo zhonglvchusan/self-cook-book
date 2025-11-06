@@ -3,11 +3,8 @@ package wang.zehui.self.cook.book.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import wang.zehui.self.cook.book.dao.UserDao;
 import wang.zehui.self.cook.book.domain.entity.User;
-import wang.zehui.self.cook.book.domain.request.UserRequest;
 import wang.zehui.self.cook.book.service.IUserService;
 import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * (User)表服务实现类
@@ -18,9 +15,5 @@ import javax.servlet.http.HttpServletRequest;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUserService {
 
-    @Override
-    public UserRequest getLoginUser(String loginId, HttpServletRequest request) {
-        return null;
-    }
 }
 

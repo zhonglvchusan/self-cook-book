@@ -17,7 +17,7 @@ import wang.zehui.self.cook.book.domain.request.UserRequest;
 import wang.zehui.self.cook.book.domain.response.ResponseDTO;
 import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
 import wang.zehui.self.cook.book.common.enums.UserAdminFlagEnum;
-import wang.zehui.self.cook.book.service.IUserService;
+import wang.zehui.self.cook.book.service.ILoginService;
 import wang.zehui.self.cook.book.common.utils.RequestUtil;
 import wang.zehui.self.cook.book.common.utils.ResponseUtil;
 
@@ -35,7 +35,7 @@ import java.util.Objects;
 public class AuthInterceptor implements HandlerInterceptor {
 
     @Autowired
-    private IUserService userService;
+    private ILoginService loginService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -56,7 +56,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             // 获取用户信息，如果可以的话
             String token = StpUtil.getTokenValue();
             String loginId = (String) StpUtil.getLoginIdByToken(token);
-            UserRequest userRequest = userService.getLoginUser(loginId, request);
+            UserRequest userRequest = loginService.getLoginUser(loginId, request);
 
             Method method = ((HandlerMethod) handler).getMethod();
             if (method.isAnnotationPresent(NoNeedLogin.class)) {

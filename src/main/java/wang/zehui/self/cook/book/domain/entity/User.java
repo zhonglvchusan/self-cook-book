@@ -26,6 +26,11 @@ public class User {
 
 
     /**
+     * 微信openId
+     */
+    private String openId;
+
+    /**
      * 登录账号
      */
     private String loginName;

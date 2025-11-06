@@ -1,0 +1,34 @@
+package wang.zehui.self.cook.book.service;
+
+import wang.zehui.self.cook.book.domain.request.LoginRequest;
+import wang.zehui.self.cook.book.domain.request.UserRequest;
+import wang.zehui.self.cook.book.domain.response.LoginResultResponse;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * @Author wangzehui
+ * @Date 2025/10/31 14:37
+ */
+public interface ILoginService {
+
+    /**
+     * @Description: 登录系统
+     * @param loginRequest 登录参数
+     * @Return: wang.zehui.self.cook.book.domain.response.LoginResultResponse
+     * @Author: wangzehui
+     * @Date: 2025/11/6 12:00
+     */
+    LoginResultResponse login(LoginRequest loginRequest);
+
+    /**
+     * @Description:
+     * @param loginId
+     * @param request
+     * @Return: wang.zehui.self.cook.book.domain.request.UserRequest
+     * @Author: wangzehui
+     * @Date: 2025/10/31 14:37
+     */
+    UserRequest getLoginUser(String loginId, HttpServletRequest request);
+
+}
