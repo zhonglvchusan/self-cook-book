@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * @Date 2025/10/31 14:37
  */
 @Service
-public class ILoginServiceImpl implements ILoginService {
+public class LoginServiceImpl implements ILoginService {
 
     @Override
     public LoginResultResponse login(LoginRequest loginRequest) {

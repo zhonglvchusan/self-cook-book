@@ -23,7 +23,7 @@ import java.util.UUID;
  */
 @Service
 @Slf4j
-public class ICaptchaServiceImpl implements ICaptchaService {
+public class CaptchaServiceImpl implements ICaptchaService {
 
     private static final char[] CAPTCHA_CHAR = "".toCharArray();
 
