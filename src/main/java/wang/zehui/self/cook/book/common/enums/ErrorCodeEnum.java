@@ -9,7 +9,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ErrorCodeEnum {
+public enum ErrorCodeEnum implements BaseEnum {
 
     LOGIN_STATE_INVALID(10001, "您还未登录或登录失效，请重新登录！"),
     NO_PERMISSION(10002, "对不起，您没有权限访问此内容！"),
@@ -25,4 +25,13 @@ public enum ErrorCodeEnum {
 
     private final String message;
 
+    @Override
+    public Object getValue() {
+        return this.code;
+    }
+
+    @Override
+    public String getDescription() {
+        return this.message;
+    }
 }

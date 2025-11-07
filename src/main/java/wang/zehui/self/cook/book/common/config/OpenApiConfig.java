@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import wang.zehui.self.cook.book.common.consts.HeaderConst;
 import wang.zehui.self.cook.book.common.consts.SwaggerTagConst;
@@ -26,6 +27,7 @@ import wang.zehui.self.cook.book.common.domain.SelfOperationCustomizer;
  */
 @Configuration
 @Slf4j
+@Conditional(SystemEnvironmentConfig.class)
 public class OpenApiConfig {
 
     public static final String[] OPEN_API_WHITELIST = {

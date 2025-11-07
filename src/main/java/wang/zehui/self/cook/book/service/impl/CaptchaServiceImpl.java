@@ -3,8 +3,11 @@ package wang.zehui.self.cook.book.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
+import wang.zehui.self.cook.book.common.domain.SystemEnvironment;
+import wang.zehui.self.cook.book.common.enums.SystemEnvironmentEnum;
 import wang.zehui.self.cook.book.domain.request.CaptchaRequest;
 import wang.zehui.self.cook.book.domain.response.CaptchaResponse;
 import wang.zehui.self.cook.book.service.ICaptchaService;
@@ -34,6 +37,9 @@ public class CaptchaServiceImpl implements ICaptchaService {
     private static final Integer HEIGHT = 43;
 
     private static final Integer EXPIRE_SECONDS = 60;
+
+    @Autowired
+    private SystemEnvironment systemEnvironment;
 
     @Override
     public CaptchaResponse generateCaptcha() {
@@ -83,7 +89,11 @@ public class CaptchaServiceImpl implements ICaptchaService {
         response.setCaptchaId(UUID.randomUUID().toString().replaceAll("-", ""));
         response.setCaptchaBase64Image(captchaBase64Image);
         response.setExpireSeconds(EXPIRE_SECONDS);
-        // TODO 如果是测试环境，返回结果
+        // 如果是测试开发环境，返回结果
+        if (systemEnvironment.getCurrentEnvironment().equalsValue(SystemEnvironmentEnum.SystemEnvironmentNameConst.TEST) ||
+            systemEnvironment.getCurrentEnvironment().equalsValue(SystemEnvironmentEnum.SystemEnvironmentNameConst.DEV)) {
+            response.setCaptchaCode(captcha.toString());
+        }
 
         // TODO 集成redis后，将结果放入redis中，并设置过期时间
         return response;

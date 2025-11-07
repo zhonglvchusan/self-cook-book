@@ -9,7 +9,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum UserAdminFlagEnum {
+public enum UserAdminFlagEnum implements BaseEnum {
 
     SUPER_ADMIN(0, "超级管理员"),
 
@@ -21,5 +21,10 @@ public enum UserAdminFlagEnum {
 
     private final Integer code;
 
-    private final String message;
+    private final String description;
+
+    @Override
+    public Object getValue() {
+        return this.code;
+    }
 }
