@@ -25,7 +25,7 @@ import java.util.UUID;
 @Slf4j
 public class CaptchaServiceImpl implements ICaptchaService {
 
-    private static final char[] CAPTCHA_CHAR = "".toCharArray();
+    private static final char[] CAPTCHA_CHAR = "abcdefghjkmnprstuvwxyzABCDEFGHJKMNPRSTUVWXYZ2345678".toCharArray();
 
     private static final Integer LENGTH = 4;
 
@@ -42,12 +42,14 @@ public class CaptchaServiceImpl implements ICaptchaService {
         // 2.获得Graphics对象
         Graphics graphics = image.getGraphics();
         // 3.设置背景颜色
-        Color color = new Color(230, 244, 255);
+        Color color = new Color(249, 250, 253);
         // 设置画笔颜色
         graphics.setColor(color);
         // 5.画框
         graphics.fillRect(0, 0, WIDTH, HEIGHT);
 
+        // 6.设置字体
+        graphics.setFont(new Font("Arial", Font.BOLD, 24));
         StringBuilder captcha = new StringBuilder(LENGTH);
 
         // 绘制验证码
@@ -55,13 +57,13 @@ public class CaptchaServiceImpl implements ICaptchaService {
             char c = CAPTCHA_CHAR[RandomUtils.nextInt(0, CAPTCHA_CHAR.length)];
             captcha.append(c);
             graphics.setColor(new Color(RandomUtils.nextInt(0, 255), RandomUtils.nextInt(0, 255), RandomUtils.nextInt(0, 255)));
-            graphics.drawString(String.valueOf(c), i * 15, HEIGHT - 15);
+            graphics.drawString(String.valueOf(c), i * 25 + 10, HEIGHT - 15);
         }
 
         log.info("验证码：{}", captcha);
 
         // 绘制干扰线
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 20; i++) {
             graphics.setColor(new Color(RandomUtils.nextInt(0, 255), RandomUtils.nextInt(0, 255), RandomUtils.nextInt(0, 255)));
             graphics.drawLine(RandomUtils.nextInt(0, WIDTH), RandomUtils.nextInt(0, HEIGHT), RandomUtils.nextInt(0, WIDTH), RandomUtils.nextInt(0, HEIGHT));
         }
@@ -71,7 +73,7 @@ public class CaptchaServiceImpl implements ICaptchaService {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(image, "jpg", outputStream);
-            captchaBase64Image = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+            captchaBase64Image = "data:image/jpg;base64," + Base64.getEncoder().encodeToString(outputStream.toByteArray());
             outputStream.close();
         } catch (IOException e) {
             log.error("验证码图片转换为Base64失败", e);
@@ -97,5 +99,9 @@ public class CaptchaServiceImpl implements ICaptchaService {
 
         // TODO 验证完毕后删除redis数据
         return true;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new CaptchaServiceImpl().generateCaptcha().getCaptchaBase64Image());
     }
 }
