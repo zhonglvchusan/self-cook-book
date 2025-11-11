@@ -1,5 +1,6 @@
 package wang.zehui.self.cook.book.common.utils;
 
+import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @Author wangzehui
@@ -94,6 +96,22 @@ public class RedisUtil {
     }
 
     /**
+     * @Description: 获取指定key的值，转换成指定对象
+     * @param key 键
+     * @param clazz 要转换的对象
+     * @Return: T 转换后的对象
+     * @Author: wangzehui
+     * @Date: 2025/11/11 15:30
+     */
+    public <T> T get(String key, Class<T> clazz) {
+        if (StringUtils.isBlank(key)) {
+            return null;
+        }
+        Object value = this.get(key);
+        return JSON.parseObject(String.valueOf(value), clazz);
+    }
+
+    /**
      * @Description: 普通缓存放入
      * @param key
      * @param value
@@ -173,11 +191,33 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/10 17:12
      */
-    public List<Object> lGet(String key, long start, long end) {
+    public List<Object> listGet(String key, long start, long end) {
         try {
             return redisTemplate.opsForList().range(key, start, end);
         } catch (Exception e) {
-            log.error("lGet error", e);
+            log.error("listGet error", e);
+            return null;
+        }
+    }
+
+    /**
+     * @Description: 获取list缓存的内容，转换成指定对象
+     * @param key 键
+     * @param start 开始位置
+     * @param end 结束位置 0 到 -1 代表所有值
+     * @param clazz 要转换的对象
+     * @Return: java.util.List<T>
+     * @Author: wangzehui
+     * @Date: 2025/11/11 15:33
+     */
+    public <T> List<T> listGet(String key, long start, long end, Class<T> clazz) {
+        try {
+            List<Object> list = this.listGet(key, start, end);
+            return list.stream()
+                    .map(item -> JSON.parseObject(String.valueOf(item), clazz))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("listGet error", e);
             return null;
         }
     }
@@ -189,12 +229,12 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/10 17:14
      */
-    public long lGerListSize(String key) {
+    public long listGetListSize(String key) {
         try {
             Long size = redisTemplate.opsForList().size(key);
             return Objects.isNull(size) ? 0 : size;
         } catch (Exception e) {
-            log.error("lGetSize error", e);
+            log.error("listGetSize error", e);
             return 0;
         }
     }
@@ -207,11 +247,30 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/10 17:16
      */
-    public Object lGetIndex(String key, long index) {
+    public Object listGetIndex(String key, long index) {
         try {
             return redisTemplate.opsForList().index(key, index);
         } catch (Exception e) {
-            log.error("lGetIndex error", e);
+            log.error("listGetIndex error", e);
+            return null;
+        }
+    }
+
+    /**
+     * @Description: 获取list指定索引位置的值，转换成指定对象
+     * @param key 键
+     * @param index 索引 index >=0 时，0: 表头，1：第二个元素，依此类推；index < 0 时，-1: 表尾，-2：倒数第二个元素，依此类推
+     * @param clazz 要转换的对象
+     * @Return: T
+     * @Author: wangzehui
+     * @Date: 2025/11/11 15:35
+     */
+    public <T> T listGetIndex(String key, long index, Class<T> clazz) {
+        try {
+            Object value = this.listGetIndex(key, index);
+            return JSON.parseObject(String.valueOf(index), clazz);
+        } catch (Exception e) {
+            log.error("listGetIndex error", e);
             return null;
         }
     }
@@ -224,12 +283,12 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/10 17:19
      */
-    public boolean lSet(String key, Object value) {
+    public boolean listSet(String key, Object value) {
         try {
             redisTemplate.opsForList().rightPush(key, value);
             return true;
         } catch (Exception e) {
-            log.error("lSet error", e);
+            log.error("listSet error", e);
             return false;
         }
     }
@@ -243,7 +302,7 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/10 17:51
      */
-    public boolean lSet(String key, Object value, long time) {
+    public boolean listSet(String key, Object value, long time) {
         try {
             redisTemplate.opsForList().rightPush(key, value);
             if (time > 0) {
@@ -251,7 +310,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            log.error("lSet time error", e);
+            log.error("listSet time error", e);
             return false;
         }
     }
@@ -264,12 +323,12 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/10 17:54
      */
-    public boolean lSet(String key, List<Object> value) {
+    public boolean listSet(String key, List<Object> value) {
         try {
             redisTemplate.opsForList().rightPushAll(key, value);
             return true;
         } catch (Exception e) {
-            log.error("lSet list error", e);
+            log.error("listSet list error", e);
             return false;
         }
     }
@@ -283,7 +342,7 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/10 17:56
      */
-    public boolean lSet(String key, List<Object> value, long time) {
+    public boolean listSet(String key, List<Object> value, long time) {
         try {
             redisTemplate.opsForList().rightPushAll(key, value);
             if (time > 0) {
@@ -291,7 +350,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            log.error("lSet list time error", e);
+            log.error("listSet list time error", e);
             return false;
         }
     }
@@ -305,12 +364,12 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/10 17:57
      */
-    public boolean lUpdateIndex(String key, long index, Object value) {
+    public boolean listUpdateIndex(String key, long index, Object value) {
         try {
             redisTemplate.opsForList().set(key, index, value);
             return true;
         } catch (Exception e) {
-            log.error("lUpdateIndex error", e);
+            log.error("listUpdateIndex error", e);
             return false;
         }
     }
@@ -324,11 +383,11 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/10 17:59
      */
-    public long lRemove(String key, long count, Object value) {
+    public long listRemove(String key, long count, Object value) {
         try {
             return redisTemplate.opsForList().remove(key, count, value);
         } catch (Exception e) {
-            log.error("lRemove error", e);
+            log.error("listRemove error", e);
             return 0;
         }
     }
@@ -340,11 +399,32 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/10 18:00
      */
-    public Set<Object> sGet(String key) {
+    public Set<Object> setGet(String key) {
         try {
             return redisTemplate.opsForSet().members(key);
         } catch (Exception e) {
-            log.error("sGet error", e);
+            log.error("setGet error", e);
+            return null;
+        }
+    }
+
+    /**
+     * @Description: 根据key获取Set中的所有值，转换成指定对象
+     * @param key 键
+     * @param clazz 要转换的对象
+     * @Return: java.util.Set<T>
+     * @Author: wangzehui
+     * @Date: 2025/11/11 15:37
+     */
+    public <T> Set<T> setGet(String key, Class<T> clazz) {
+        try {
+            Set<Object> set = this.setGet(key);
+            return set
+                    .stream()
+                    .map(item -> JSON.parseObject(String.valueOf(item), clazz))
+                    .collect(Collectors.toSet());
+        } catch (Exception e) {
+            log.error("setGet error", e);
             return null;
         }
     }
@@ -357,11 +437,11 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/11 9:47
      */
-    public boolean sHasKey(String key, Object value) {
+    public boolean setHasKey(String key, Object value) {
         try {
             return redisTemplate.opsForSet().isMember(key, value);
         } catch (Exception e) {
-            log.error("sHasKey error", e);
+            log.error("setHasKey error", e);
             return false;
         }
     }
@@ -374,11 +454,11 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/11 9:49
      */
-    public long sSet(String key, Object... values) {
+    public long setSet(String key, Object... values) {
         try {
             return redisTemplate.opsForSet().add(key, values);
         } catch (Exception e) {
-            log.error("sSet error", e);
+            log.error("setSet error", e);
             return 0;
         }
     }
@@ -392,7 +472,7 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/11 9:52
      */
-    public long sSetAndTime(String key, long time, Object... values) {
+    public long setSetAndTime(String key, long time, Object... values) {
         try {
             Long count = redisTemplate.opsForSet().add(key, values);
             if (time > 0) {
@@ -400,7 +480,7 @@ public class RedisUtil {
             }
             return count;
         } catch (Exception e) {
-            log.error("sSetAndTime error", e);
+            log.error("setSetAndTime error", e);
             return 0;
         }
     }
@@ -412,11 +492,11 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/11 9:53
      */
-    public long sGetSetSize(String key) {
+    public long setGetSetSize(String key) {
         try {
             return redisTemplate.opsForSet().size(key);
         } catch (Exception e) {
-            log.error("sGetSetSize error", e);
+            log.error("setGetSetSize error", e);
             return 0;
         }
     }
@@ -446,8 +526,22 @@ public class RedisUtil {
      * @Author: wangzehui
      * @Date: 2025/11/11 9:55
      */
-    public Object hGet(String key, String item) {
+    public Object hashGet(String key, String item) {
         return redisTemplate.opsForHash().get(key, item);
+    }
+
+    /**
+     * @Description: 获取map中的值，转换成指定对象
+     * @param key 键
+     * @param item 键
+     * @param clazz 要转换的对象
+     * @Return: T
+     * @Author: wangzehui
+     * @Date: 2025/11/11 15:39
+     */
+    public <T> T hashGet(String key, String item, Class<T> clazz) {
+        Object value = this.hashGet(key, item);
+        return JSON.parseObject(String.valueOf(value), clazz);
     }
 
     /**
