@@ -5,9 +5,11 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import wang.zehui.self.cook.book.common.consts.RedisKeyConst;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.SystemEnvironment;
 import wang.zehui.self.cook.book.common.enums.SystemEnvironmentEnum;
+import wang.zehui.self.cook.book.common.utils.RedisUtil;
 import wang.zehui.self.cook.book.domain.request.CaptchaRequest;
 import wang.zehui.self.cook.book.domain.response.CaptchaResponse;
 import wang.zehui.self.cook.book.service.ICaptchaService;
@@ -40,6 +42,9 @@ public class CaptchaServiceImpl implements ICaptchaService {
 
     @Autowired
     private SystemEnvironment systemEnvironment;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public CaptchaResponse generateCaptcha() {
@@ -95,7 +100,9 @@ public class CaptchaServiceImpl implements ICaptchaService {
             response.setCaptchaCode(captcha.toString());
         }
 
-        // TODO 集成redis后，将结果放入redis中，并设置过期时间
+        // 将结果放入redis中，并设置过期时间
+        String redisKey = redisUtil.generateRedisKey(RedisKeyConst.CAPTCHA, response.getCaptchaId());
+        redisUtil.set(redisKey, captcha.toString(), EXPIRE_SECONDS);
         return response;
     }
 
@@ -105,9 +112,20 @@ public class CaptchaServiceImpl implements ICaptchaService {
             throw new BusinessException("请正确输入验证码");
         }
 
-        // TODO 从redis中取出验证码，判断验证码是否正确
+        // 从redis中取出验证码，判断验证码是否正确
+        String redisKey = redisUtil.generateRedisKey(RedisKeyConst.CAPTCHA, captchaRequest.getCaptchaId());
+        String code = redisUtil.get(redisKey, String.class);
 
-        // TODO 验证完毕后删除redis数据
+        if (StringUtils.isBlank(code)) {
+            throw new BusinessException("验证码已过期，请刷新重试");
+        }
+
+        if (!code.equalsIgnoreCase(captchaRequest.getCaptchaCode())) {
+            throw new BusinessException("验证码错误，请输入正确的验证码");
+        }
+
+        // 验证完毕后删除redis数据
+        redisUtil.del(redisKey);
         return true;
     }
 

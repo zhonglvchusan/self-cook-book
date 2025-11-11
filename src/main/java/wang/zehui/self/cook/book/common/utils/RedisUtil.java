@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import wang.zehui.self.cook.book.common.consts.RedisKeyConst;
+import wang.zehui.self.cook.book.common.domain.SystemEnvironment;
+import wang.zehui.self.cook.book.common.enums.SystemEnvironmentEnum;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -21,6 +24,22 @@ public class RedisUtil {
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Resource
+    private SystemEnvironment systemEnvironment;
+
+    /**
+     * @Description: 生成redis key
+     * @param prefix 前缀
+     * @param key 键
+     * @Return: java.lang.String
+     * @Author: wangzehui
+     * @Date: 2025/11/11 15:52
+     */
+    public String generateRedisKey(String prefix, String key) {
+        SystemEnvironmentEnum currentEnvironment = systemEnvironment.getCurrentEnvironment();
+        return systemEnvironment.getProjectName() + RedisKeyConst.SEPARATOR + currentEnvironment.getValue() + RedisKeyConst.SEPARATOR + prefix + key;
+    }
 
     /**
      * @Description: 设置key过期时间
