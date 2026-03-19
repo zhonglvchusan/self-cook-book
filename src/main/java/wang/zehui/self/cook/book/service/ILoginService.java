@@ -1,5 +1,6 @@
 package wang.zehui.self.cook.book.service;
 
+import wang.zehui.self.cook.book.domain.entity.User;
 import wang.zehui.self.cook.book.domain.request.LoginRequest;
 import wang.zehui.self.cook.book.domain.request.UserRequest;
 import wang.zehui.self.cook.book.domain.response.LoginResultResponse;
@@ -30,5 +31,14 @@ public interface ILoginService {
      * @Date: 2025/10/31 14:37
      */
     UserRequest getLoginUser(String loginId, HttpServletRequest request);
+
+    /**
+     * @Description: 载入用户登录信息
+     * @param user 数据库user信息
+     * @Return: wang.zehui.self.cook.book.domain.request.UserRequest
+     * @Author: wangzehui
+     * @Date: 2026/3/19 14:31
+     */
+    UserRequest loadLoginInfo(User user);
 
 }

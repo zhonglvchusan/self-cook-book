@@ -13,4 +13,6 @@ public class RedisKeyConst {
     public static final String ADMIN = "admin:";
 
     public static final String CAPTCHA = "captcha:";
+
+    public static final String REQUEST_USER = "request:user:";
 }

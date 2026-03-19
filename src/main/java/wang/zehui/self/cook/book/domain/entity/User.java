@@ -78,7 +78,7 @@ public class User {
     /**
      * 管理员标识 0超级管理员 1普通管理员 2用户
      */
-    private Boolean adminFlag;
+    private Integer adminFlag;
 
     /**
      * 是否删除 0未删除 1已删除
