@@ -18,6 +18,8 @@
         <sa-token.version>1.39.0</sa-token.version>
         <fastjson2.version>2.0.60</fastjson2.version>
         <knife4j.version>4.5.0</knife4j.version>
+        <common.lang3.version>3.12.0</common.lang3.version>
+        <common.collections4.version>4.4</common.collections4.version>
     </properties>
 
     <dependencyManagement>
@@ -93,6 +95,17 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${common.lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${common.collections4.version}</version>
         </dependency>
 
     </dependencies>
