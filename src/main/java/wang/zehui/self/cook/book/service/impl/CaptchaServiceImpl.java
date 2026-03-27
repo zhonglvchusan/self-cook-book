@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -110,6 +111,11 @@ public class CaptchaServiceImpl implements ICaptchaService {
     public Boolean checkCaptcha(CaptchaRequest captchaRequest) {
         if (StringUtils.isAllBlank(captchaRequest.getCaptchaId(), captchaRequest.getCaptchaCode())) {
             throw new BusinessException("请正确输入验证码");
+        }
+
+        // 开发环境不进行校验
+        if (Objects.equals(SystemEnvironmentEnum.DEV, systemEnvironment.getCurrentEnvironment())) {
+            return true;
         }
 
         // 从redis中取出验证码，判断验证码是否正确

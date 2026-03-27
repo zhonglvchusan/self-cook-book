@@ -31,6 +31,11 @@ public class User {
     private String openId;
 
     /**
+     * 微信unionId
+     */
+    private String unionId;
+
+    /**
      * 登录账号
      */
     private String loginName;
@@ -58,7 +63,7 @@ public class User {
     /**
      * 性别 0未知 1男 2女
      */
-    private Boolean gender;
+    private Integer gender;
 
     /**
      * 手机号
