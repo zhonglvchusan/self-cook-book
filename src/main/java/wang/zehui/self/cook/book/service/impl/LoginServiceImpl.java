@@ -234,8 +234,7 @@ public class LoginServiceImpl implements ILoginService {
 
     private LoginResultResponse getLoginResult(UserRequest userRequest) {
         LoginResultResponse loginResultResponse = new LoginResultResponse();
-
-
+        BeanUtils.copyProperties(userRequest, loginResultResponse);
         return loginResultResponse;
     }
 }
