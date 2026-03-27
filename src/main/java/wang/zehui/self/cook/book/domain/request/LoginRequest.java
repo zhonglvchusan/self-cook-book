@@ -26,6 +26,10 @@ public class LoginRequest {
     @NotBlank(message = "登录名不能为空", groups = { AdminGroup.class})
     private String loginName;
 
+    @Schema(description = "密码")
+    @NotBlank(message = "密码不能为空", groups = { AdminGroup.class})
+    private String password;
+
     @Schema(description = "验证码")
     @NotNull(message = "验证码不能为空", groups = { AdminGroup.class })
     private CaptchaRequest captchaRequest;

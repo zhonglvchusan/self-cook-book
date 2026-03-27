@@ -2,6 +2,7 @@ package wang.zehui.self.cook.book.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.BeanUtils;
@@ -89,6 +90,12 @@ public class LoginServiceImpl implements ILoginService {
             UserAddRequest userAddRequest = this.buildMiniAppAddUser(loginRequest.getLoginName(), userOpenIdAndUnionId);
             userService.registerUser(userAddRequest);
             user = userService.getByLoginName(loginRequest.getLoginName());
+        }
+
+        if (!loginRequest.getMiniAppFlag()) {
+            if (!Objects.equals(DigestUtils.md5Hex(loginRequest.getPassword() + loginRequest.getLoginName()), user.getLoginPassword())) {
+                throw new BusinessException("登录名或密码错误");
+            }
         }
 
         // 验证用户状态
