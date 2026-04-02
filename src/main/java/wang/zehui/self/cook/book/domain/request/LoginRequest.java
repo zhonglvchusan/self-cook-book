@@ -42,7 +42,7 @@ public class LoginRequest {
     @NotBlank(message = "微信小程序登录code不能为空", groups = { ApiGroup.class })
     private String loginCode;
 
-    public static class AdminGroup {}
+    public interface AdminGroup {}
 
-    public static class ApiGroup {}
+    public interface ApiGroup {}
 }
