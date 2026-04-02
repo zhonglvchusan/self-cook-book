@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,6 +19,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MybatisPlusConfig {
 
+    @Autowired
+    private CustomTenantHandler customTenantHandler;
+
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
@@ -26,7 +30,9 @@ public class MybatisPlusConfig {
         // 防止全表更新与删除插件
         interceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
         // 多租户插件
-        interceptor.addInnerInterceptor(new TenantLineInnerInterceptor());
+        TenantLineInnerInterceptor tenantLineInnerInterceptor = new TenantLineInnerInterceptor();
+        tenantLineInnerInterceptor.setTenantLineHandler(customTenantHandler);
+        interceptor.addInnerInterceptor(tenantLineInnerInterceptor);
         return interceptor;
     }
 

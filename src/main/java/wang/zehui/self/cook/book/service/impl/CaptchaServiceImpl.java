@@ -114,7 +114,7 @@ public class CaptchaServiceImpl implements ICaptchaService {
         }
 
         // 开发环境不进行校验
-        if (Objects.equals(SystemEnvironmentEnum.DEV, systemEnvironment.getCurrentEnvironment())) {
+        if (Objects.equals(SystemEnvironmentEnum.DEV, systemEnvironment.getCurrentEnvironment()) || Objects.equals(SystemEnvironmentEnum.TEST, systemEnvironment.getCurrentEnvironment())) {
             return true;
         }
 
