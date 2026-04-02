@@ -127,7 +127,7 @@ public class RedisUtil {
             return null;
         }
         Object value = this.get(key);
-        return JSON.parseObject(String.valueOf(value), clazz);
+        return JSON.parseObject(JSON.toJSONString(value), clazz);
     }
 
     /**
@@ -233,7 +233,7 @@ public class RedisUtil {
         try {
             List<Object> list = this.listGet(key, start, end);
             return list.stream()
-                    .map(item -> JSON.parseObject(String.valueOf(item), clazz))
+                    .map(item -> JSON.parseObject(JSON.toJSONString(item), clazz))
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("listGet error", e);
@@ -287,7 +287,7 @@ public class RedisUtil {
     public <T> T listGetIndex(String key, long index, Class<T> clazz) {
         try {
             Object value = this.listGetIndex(key, index);
-            return JSON.parseObject(String.valueOf(index), clazz);
+            return JSON.parseObject(JSON.toJSONString(value), clazz);
         } catch (Exception e) {
             log.error("listGetIndex error", e);
             return null;
@@ -560,7 +560,7 @@ public class RedisUtil {
      */
     public <T> T hashGet(String key, String item, Class<T> clazz) {
         Object value = this.hashGet(key, item);
-        return JSON.parseObject(String.valueOf(value), clazz);
+        return JSON.parseObject(JSON.toJSONString(value), clazz);
     }
 
     /**
