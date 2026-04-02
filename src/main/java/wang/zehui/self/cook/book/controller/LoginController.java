@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import wang.zehui.self.cook.book.common.annoation.NoNeedLogin;
 import wang.zehui.self.cook.book.domain.request.LoginRequest;
 import wang.zehui.self.cook.book.domain.response.CaptchaResponse;
 import wang.zehui.self.cook.book.domain.response.LoginResultResponse;
@@ -29,12 +30,14 @@ public class LoginController {
 
     @PostMapping
     @Operation(summary = "登录 @author wangzh")
+    @NoNeedLogin
     public ResponseDTO<LoginResultResponse> login(@RequestBody @Validated LoginRequest loginRequest) {
         return ResponseDTO.success(loginService.login(loginRequest));
     }
 
     @GetMapping("/captcha")
     @Operation(summary = "获取验证码 @author wangzh")
+    @NoNeedLogin
     public ResponseDTO<CaptchaResponse> getCaptcha() {
         return ResponseDTO.success(captchaService.generateCaptcha());
     }
