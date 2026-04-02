@@ -1,0 +1,41 @@
+package wang.zehui.self.cook.book.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import wang.zehui.self.cook.book.domain.request.LoginRequest;
+import wang.zehui.self.cook.book.domain.response.CaptchaResponse;
+import wang.zehui.self.cook.book.domain.response.LoginResultResponse;
+import wang.zehui.self.cook.book.domain.response.ResponseDTO;
+import wang.zehui.self.cook.book.service.ICaptchaService;
+import wang.zehui.self.cook.book.service.ILoginService;
+
+/**
+ * @Author wangzehui
+ * @Date 2026/4/2 11:22
+ */
+@Tag(name = "登录相关接口")
+@RestController
+@RequestMapping("/login")
+public class LoginController {
+
+    @Autowired
+    private ILoginService loginService;
+
+    @Autowired
+    private ICaptchaService captchaService;
+
+    @PostMapping
+    @Operation(summary = "登录 @author wangzh")
+    public ResponseDTO<LoginResultResponse> login(@RequestBody @Validated LoginRequest loginRequest) {
+        return ResponseDTO.success(loginService.login(loginRequest));
+    }
+
+    @GetMapping("/captcha")
+    @Operation(summary = "获取验证码 @author wangzh")
+    public ResponseDTO<CaptchaResponse> getCaptcha() {
+        return ResponseDTO.success(captchaService.generateCaptcha());
+    }
+}
