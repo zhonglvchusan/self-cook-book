@@ -29,4 +29,23 @@ public class EnumUtil {
                 .findFirst()
                 .orElse(null);
     }
+
+    /**
+     * @Description: 获取与参数相匹配的枚举类实例的 说明
+     * @param value 参数
+     * @param enumClass 枚举类必须实现BaseEnum接口
+     * @Return: java.lang.String 如无匹配枚举则返回null
+     * @Author: wangzehui
+     * @Date: 2026/4/8 15:04
+     */
+    public static String getEnumDescriptionByValue(Object value, Class<? extends BaseEnum> enumClass) {
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return Stream.of(enumClass.getEnumConstants())
+                .filter(e -> e.equalsValue(value))
+                .findFirst()
+                .map(BaseEnum::getDescription)
+                .orElse(null);
+    }
 }

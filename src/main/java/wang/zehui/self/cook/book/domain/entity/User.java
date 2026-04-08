@@ -17,13 +17,11 @@ import java.time.LocalDateTime;
 @TableName("t_user")
 public class User {
 
-
     /**
      * 主键
      */
     @TableId(type = IdType.ASSIGN_ID)
     private String id;
-
 
     /**
      * 微信openId

@@ -1,8 +1,13 @@
 package wang.zehui.self.cook.book.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.domain.entity.User;
 import wang.zehui.self.cook.book.domain.request.UserAddRequest;
+import wang.zehui.self.cook.book.domain.request.UserListRequest;
+import wang.zehui.self.cook.book.domain.request.UserUpdateRequest;
+import wang.zehui.self.cook.book.domain.response.UserInfoResponse;
+import wang.zehui.self.cook.book.domain.response.UserListResponse;
 
 /**
  * (User)表服务接口
@@ -30,5 +35,51 @@ public interface IUserService extends IService<User> {
      */
     String registerUser(UserAddRequest userAddRequest);
 
+    /**
+     * @Description: 删除用户
+     * @param userId 用户id
+     * @Return: java.lang.Boolean
+     * @Author: wangzehui
+     * @Date: 2026/4/2 15:53
+     */
+    Boolean deleteUser(String userId);
+
+    /**
+     * @Description: 禁用/解禁用户
+     *  若用户当前状态为禁用，则解禁；
+     *  若用户当前状态为正常，则禁用
+     * @param userId 用户id
+     * @Return: java.lang.Boolean
+     * @Author: wangzehui
+     * @Date: 2026/4/2 15:54
+     */
+    Boolean changeUserState(String userId);
+
+    /**
+     * @Description: 修改用户信息
+     * @param userUpdateRequest 修改用户信息表单
+     * @Return: java.lang.Boolean
+     * @Author: wangzehui
+     * @Date: 2026/4/2 15:56
+     */
+    Boolean updateUser(UserUpdateRequest userUpdateRequest);
+
+    /**
+     * @Description: 获取用户列表
+     * @param request 查询条件
+     * @Return: wang.zehui.self.cook.book.common.domain<wang.zehui.self.cook.book.domain.response.UserListResponse>
+     * @Author: wangzehui
+     * @Date: 2026/4/2 15:57
+     */
+    PageResult<UserListResponse> getUserList(UserListRequest request);
+
+    /**
+     * @Description: 获取用户详情
+     * @param userId 用户id
+     * @Return: wang.zehui.self.cook.book.domain.response.UserInfoResponse
+     * @Author: wangzehui
+     * @Date: 2026/4/2 15:58
+     */
+    UserInfoResponse getUserInfo(String userId);
 }
 

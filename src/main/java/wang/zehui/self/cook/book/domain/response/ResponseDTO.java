@@ -57,6 +57,10 @@ public class ResponseDTO<T> {
         return new ResponseDTO<>(SUCCESS_CODE, true, SUCCESS_MESSAGE, data);
     }
 
+    public static <T> ResponseDTO<T> success(Integer code, T data) {
+        return new ResponseDTO<>(code, true, SUCCESS_MESSAGE, data);
+    }
+
     public static <T> ResponseDTO<T> error() {
         return new ResponseDTO<>(ERROR_CODE, false, ERROR_MESSAGE);
     }
