@@ -1,5 +1,6 @@
 package wang.zehui.self.cook.book.service.impl;
 
+import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -30,6 +31,8 @@ import wang.zehui.self.cook.book.service.IWxService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,7 +43,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class LoginServiceImpl implements ILoginService {
+public class LoginServiceImpl implements ILoginService, StpInterface {
 
     @Autowired
     private IUserService userService;
@@ -243,5 +246,32 @@ public class LoginServiceImpl implements ILoginService {
         LoginResultResponse loginResultResponse = new LoginResultResponse();
         BeanUtils.copyProperties(userRequest, loginResultResponse);
         return loginResultResponse;
+    }
+
+    /**
+     * @Description: saToken用户权限获取
+     * @param loginId 登录ID
+     * @param loginType 登录类型
+     * @Return: java.util.List<java.lang.String>
+     * @Author: wangzehui
+     * @Date: 2026/4/8 16:42
+     */
+    @Override
+    public List<String> getPermissionList(Object loginId, String loginType) {
+
+        return Collections.emptyList();
+    }
+
+    /**
+     * @Description: saToken用户角色获取
+     * @param loginId 登录ID
+     * @param loginType 登录类型
+     * @Return: java.util.List<java.lang.String>
+     * @Author: wangzehui
+     * @Date: 2026/4/8 16:43
+     */
+    @Override
+    public List<String> getRoleList(Object loginId, String loginType) {
+        return Collections.emptyList();
     }
 }
