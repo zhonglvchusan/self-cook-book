@@ -3,6 +3,7 @@ package wang.zehui.self.cook.book.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import wang.zehui.self.cook.book.domain.entity.Menu;
 import wang.zehui.self.cook.book.domain.request.MenuRequest;
+import wang.zehui.self.cook.book.domain.response.MenuInfoResponse;
 import wang.zehui.self.cook.book.domain.response.MenuTreeResponse;
 
 import java.util.List;
@@ -40,5 +41,14 @@ public interface IMenuService extends IService<Menu> {
      * @Date: 2026/4/9 12:10
      */
     List<MenuTreeResponse> getMenuTree();
+
+    /**
+     * @Description: 获取菜单详情
+     * @param menuId 菜单ID
+     * @Return: wang.zehui.self.cook.book.domain.response.MenuInfoResponse
+     * @Author: wangzehui
+     * @Date: 2026/4/10 10:28
+     */
+    MenuInfoResponse getMenuInfo(String menuId);
 }
 

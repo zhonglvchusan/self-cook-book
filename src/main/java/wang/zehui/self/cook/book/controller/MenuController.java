@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
 import wang.zehui.self.cook.book.domain.request.MenuRequest;
+import wang.zehui.self.cook.book.domain.response.MenuInfoResponse;
 import wang.zehui.self.cook.book.domain.response.MenuTreeResponse;
 import wang.zehui.self.cook.book.domain.response.ResponseDTO;
 import wang.zehui.self.cook.book.service.IMenuService;
@@ -30,21 +31,28 @@ public class MenuController {
     @PostMapping
     @Operation(summary = "新增/修改菜单 @author wangzh")
     @SaCheckPermission("menu:saveOrUpdate")
-    private ResponseDTO<Boolean> saveOrUpdateMenu(@RequestBody @Validated MenuRequest request) {
+    public ResponseDTO<Boolean> saveOrUpdateMenu(@RequestBody @Validated MenuRequest request) {
         return ResponseDTO.success(menuService.saveOrUpdateMenu(request));
     }
 
     @DeleteMapping
     @Operation(summary = "批量删除菜单 @author wangzh")
     @SaCheckPermission("menu:batchDelete")
-    private ResponseDTO<Boolean> batchDeleteMenu(@RequestBody @Validated List<String> menuIds) {
+    public ResponseDTO<Boolean> batchDeleteMenu(@RequestBody @Validated List<String> menuIds) {
         return ResponseDTO.success(menuService.batchDeleteMenu(menuIds));
     }
 
     @GetMapping
     @Operation(summary = "查询菜单树 @author wangzh")
-    private ResponseDTO<List<MenuTreeResponse>> getMenuTree() {
+    public ResponseDTO<List<MenuTreeResponse>> getMenuTree() {
         return ResponseDTO.success(menuService.getMenuTree());
+    }
+
+    @GetMapping("/{menuId}")
+    @Operation(summary = "查询菜单信息 @author wangzh")
+    @SaCheckPermission("menu:info")
+    public ResponseDTO<MenuInfoResponse> getMenuInfo(@PathVariable String menuId) {
+        return ResponseDTO.success(menuService.getMenuInfo(menuId));
     }
 }
 

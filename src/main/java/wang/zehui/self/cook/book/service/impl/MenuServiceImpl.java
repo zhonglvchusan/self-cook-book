@@ -11,6 +11,7 @@ import wang.zehui.self.cook.book.common.utils.ConvertUtil;
 import wang.zehui.self.cook.book.dao.MenuDao;
 import wang.zehui.self.cook.book.domain.entity.Menu;
 import wang.zehui.self.cook.book.domain.request.MenuRequest;
+import wang.zehui.self.cook.book.domain.response.MenuInfoResponse;
 import wang.zehui.self.cook.book.domain.response.MenuTreeResponse;
 import wang.zehui.self.cook.book.service.IMenuService;
 import org.springframework.stereotype.Service;
@@ -75,6 +76,24 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements IMenu
                 .in(Menu::getMenuType, MenuTypeEnum.CATALOG.getCode(), MenuTypeEnum.MENU.getCode()));
 
         return this.buildMenuTree(menus);
+    }
+
+    @Override
+    public MenuInfoResponse getMenuInfo(String menuId) {
+        Menu menu = this.getById(menuId);
+
+        if (Objects.isNull(menu)) {
+            throw new BusinessException("菜单不存在");
+        }
+
+        if (menu.getDeletedFlag()) {
+            throw new BusinessException("菜单已删除");
+        }
+
+        MenuInfoResponse menuInfoResponse = new MenuInfoResponse();
+        BeanUtils.copyProperties(menu, menuInfoResponse);
+
+        return menuInfoResponse;
     }
 
     /**
