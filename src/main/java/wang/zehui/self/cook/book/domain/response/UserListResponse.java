@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import wang.zehui.self.cook.book.common.annoation.SchemaEnum;
 import wang.zehui.self.cook.book.common.enums.GenderEnum;
-import wang.zehui.self.cook.book.common.enums.UserAdminFlagEnum;
 
 import java.time.LocalDateTime;
 
@@ -29,6 +28,9 @@ public class UserListResponse {
 
     @Schema(description = "真实姓名")
     private String realName;
+
+    @Schema(description = "手机号")
+    private String phoneNumber;
 
     @SchemaEnum(description = "性别", value = GenderEnum.class)
     private Integer gender;

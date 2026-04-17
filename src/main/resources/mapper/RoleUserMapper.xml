@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wang.zehui.self.cook.book.dao.RoleUserDao">
+
+    <resultMap type="wang.zehui.self.cook.book.domain.entity.RoleUser" id="RoleUserMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="roleId" column="role_id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="createUserId" column="create_user_id" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="updateUserId" column="update_user_id" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="getRoleUserByName" resultType="wang.zehui.self.cook.book.domain.entity.User">
+        SELECT
+            u.id,
+            u.login_name,
+            u.avatar
+            u.nickname,
+            u.real_name,
+            u.phone_number,
+            u.gender,
+            u.state,
+            u.remark,
+            u.create_time
+        FROM
+            t_role_user ru
+        LEFT JOIN t_user u ON ru.user_id = u.id
+        <where>
+            <if test="request.roleId != null">
+                ru.role_id = #{request.roleId}
+            </if>
+            <if test="request.keyword != null and request.keyword != ''">
+                AND (
+                    INSTR(u.real_name, #{request.keyword})
+                    OR INSTR(u.nickname, #{request.keyword})
+                    OR INSTR(u.login_name, #{request.keyword})
+                )
+            </if>
+        </where>
+    </select>
+
+    <select id="getRoleByUserId" resultType="wang.zehui.self.cook.book.domain.response.RoleInfoResponse">
+        SELECT
+            r.id,
+            r.role_name,
+            r.role_code,
+            r.remark
+        FROM t_role_user ru
+        LEFT JOIN t_role r ON ru.role_id = r.id
+        WHERE ru.user_id = #{userId}
+    </select>
+
+</mapper>
+
