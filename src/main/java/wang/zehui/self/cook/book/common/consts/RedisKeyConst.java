@@ -19,4 +19,6 @@ public class RedisKeyConst {
     public static final String WX_MINI_APP_PREFIX = "wechat:mini-app:";
 
     public static final String WX_MINI_APP_ACCESS_TOKEN = "access-token";
+
+    public static final String LOGIN_USER_PERMISSION = "login:user:permission:";
 }

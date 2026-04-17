@@ -14,27 +14,26 @@ import wang.zehui.self.cook.book.common.consts.HeaderConst;
 import wang.zehui.self.cook.book.common.consts.RedisKeyConst;
 import wang.zehui.self.cook.book.common.consts.StringConst;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
+import wang.zehui.self.cook.book.common.domain.UserPermission;
 import wang.zehui.self.cook.book.common.enums.GenderEnum;
 import wang.zehui.self.cook.book.common.enums.LoginDeviceEnum;
 import wang.zehui.self.cook.book.common.enums.UserAdminFlagEnum;
+import wang.zehui.self.cook.book.common.utils.ConvertUtil;
 import wang.zehui.self.cook.book.common.utils.RedisUtil;
+import wang.zehui.self.cook.book.domain.entity.Menu;
 import wang.zehui.self.cook.book.domain.entity.User;
 import wang.zehui.self.cook.book.domain.request.LoginRequest;
 import wang.zehui.self.cook.book.domain.request.UserAddRequest;
 import wang.zehui.self.cook.book.domain.request.UserRequest;
 import wang.zehui.self.cook.book.domain.response.LoginResultResponse;
-import wang.zehui.self.cook.book.service.ICaptchaService;
-import wang.zehui.self.cook.book.service.ILoginService;
-import wang.zehui.self.cook.book.service.IUserService;
-import wang.zehui.self.cook.book.service.IWxService;
+import wang.zehui.self.cook.book.domain.response.MenuInfoResponse;
+import wang.zehui.self.cook.book.domain.response.RoleInfoResponse;
+import wang.zehui.self.cook.book.service.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -59,6 +58,12 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
 
     @Autowired
     private IWxService wxService;
+
+    @Autowired
+    private IRoleMenuService roleMenuService;
+
+    @Autowired
+    private IRoleUserService roleUserService;
 
     private static final long USER_LOGIN_INFO_EXPIRE_TIME = 86400L;
 
@@ -178,6 +183,7 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
         userRequest = new UserRequest();
         BeanUtils.copyProperties(user, userRequest);
         userRequest.setUserId(user.getId());
+        userRequest.setIsAdmin(!Objects.equals(UserAdminFlagEnum.USER.getCode(), user.getAdminFlag()));
 
         redisUtil.set(cacheKey, userRequest, USER_LOGIN_INFO_EXPIRE_TIME);
 
@@ -245,6 +251,17 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
     private LoginResultResponse getLoginResult(UserRequest userRequest) {
         LoginResultResponse loginResultResponse = new LoginResultResponse();
         BeanUtils.copyProperties(userRequest, loginResultResponse);
+
+        // 前端菜单和功能点清单
+        List<RoleInfoResponse> roles = roleUserService.getRoleByUserId(userRequest.getUserId());
+        List<Menu> menus = roleMenuService.getMenuList(ConvertUtil.convertList(roles, RoleInfoResponse::getId), userRequest.getIsAdmin());
+        loginResultResponse.setMenus(menus.stream()
+                .map(menu -> {
+                    MenuInfoResponse menuInfoResponse = new MenuInfoResponse();
+                    BeanUtils.copyProperties(menu, menuInfoResponse);
+                    return menuInfoResponse;
+                }).collect(Collectors.toList()));
+
         return loginResultResponse;
     }
 
@@ -258,8 +275,13 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
+        String userId = this.getUserIdByLoginId(String.valueOf(loginId));
+        if (StringUtils.isBlank(userId)) {
+            return Collections.emptyList();
+        }
 
-        return Collections.emptyList();
+        UserPermission userPermission = this.loadUserPermission(userId);
+        return userPermission.getPermissions();
     }
 
     /**
@@ -272,6 +294,52 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        return Collections.emptyList();
+        String userId = this.getUserIdByLoginId(String.valueOf(loginId));
+        if (StringUtils.isBlank(userId)) {
+            return Collections.emptyList();
+        }
+
+        UserPermission userPermission = this.loadUserPermission(userId);
+        return userPermission.getRoles();
+    }
+
+    /**
+     * @Description: 加载用户角色、权限
+     * @param userId 用户ID
+     * @Return: wang.zehui.self.cook.book.common.domain.UserPermission
+     * @Author: wangzehui
+     * @Date: 2026/4/17 14:49
+     */
+    private synchronized UserPermission loadUserPermission(String userId) {
+        // 先查询缓存
+        String cacheKey = redisUtil.generateRedisKey(RedisKeyConst.ADMIN, RedisKeyConst.LOGIN_USER_PERMISSION + userId);
+        UserPermission userPermission = redisUtil.get(cacheKey, UserPermission.class);
+        if (!Objects.isNull(userPermission)) {
+            return userPermission;
+        }
+
+        userPermission = new UserPermission();
+        userPermission.setPermissions(new ArrayList<>());
+        userPermission.setRoles(new ArrayList<>());
+
+        // 获取用户角色并设置
+        List<RoleInfoResponse> userRoles = roleUserService.getRoleByUserId(userId);
+        userPermission.getRoles().addAll(ConvertUtil.convertList(userRoles, RoleInfoResponse::getRoleCode));
+
+        User user = userService.getById(userId);
+        List<Menu> menus = roleMenuService.getMenuList(ConvertUtil.convertList(userRoles, RoleInfoResponse::getId), !Objects.equals(UserAdminFlagEnum.USER.getCode(), user.getAdminFlag()));
+
+        // 添加用户权限
+        menus.stream()
+                .filter(menu -> !Objects.isNull(menu.getPermsType()))
+                .filter(menu -> !StringUtils.isBlank(menu.getApiPerms()))
+                .map(menu -> menu.getApiPerms().split(","))
+                .flatMap(Arrays::stream)
+                .forEach(userPermission.getPermissions()::add);
+
+        // redis没有缓存，则设置缓存
+        redisUtil.set(cacheKey, userPermission, USER_LOGIN_INFO_EXPIRE_TIME);
+
+        return userPermission;
     }
 }

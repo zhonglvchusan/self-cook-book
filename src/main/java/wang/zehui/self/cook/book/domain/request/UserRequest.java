@@ -33,4 +33,7 @@ public class UserRequest {
 
     @Schema(description = "邮箱")
     private String email;
+
+    @Schema(description = "是否是管理员")
+    private Boolean isAdmin;
 }
