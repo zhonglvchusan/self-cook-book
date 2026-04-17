@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import wang.zehui.self.cook.book.common.annoation.NoNeedLogin;
+import wang.zehui.self.cook.book.common.utils.RequestUtil;
 import wang.zehui.self.cook.book.domain.request.LoginRequest;
 import wang.zehui.self.cook.book.domain.response.CaptchaResponse;
 import wang.zehui.self.cook.book.domain.response.LoginResultResponse;
@@ -40,5 +41,11 @@ public class LoginController {
     @NoNeedLogin
     public ResponseDTO<CaptchaResponse> getCaptcha() {
         return ResponseDTO.success(captchaService.generateCaptcha());
+    }
+
+    @GetMapping("/logout")
+    @Operation(summary = "退出登录 @author wangzh")
+    public ResponseDTO<Boolean> logout() {
+        return ResponseDTO.success(loginService.logout(RequestUtil.getUserRequest()));
     }
 }

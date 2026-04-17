@@ -115,7 +115,7 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
             throw new BusinessException("用户已禁用,请联系工作人员");
         }
 
-        String saTokenLoginId = UserAdminFlagEnum.USER.getValue() + StringConst.COLON + user.getId();
+        String saTokenLoginId = user.getAdminFlag() + StringConst.COLON + user.getId();
 
         // 登录
         StpUtil.login(saTokenLoginId, String.valueOf(loginDeviceEnum.getDescription()));
@@ -130,6 +130,7 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
         // 设置token
         loginResult.setToken(token);
 
+        this.loadUserPermission(user.getId());
         return loginResult;
     }
 
@@ -190,6 +191,16 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
         return userRequest;
     }
 
+    @Override
+    public Boolean logout(UserRequest userRequest) {
+        StpUtil.logout();
+
+        String userInfoCacheKey = redisUtil.generateRedisKey(!userRequest.getIsAdmin() ? RedisKeyConst.API : RedisKeyConst.ADMIN, RedisKeyConst.REQUEST_USER + userRequest.getUserId());
+        String userPermissionCacheKey = redisUtil.generateRedisKey(RedisKeyConst.ADMIN, RedisKeyConst.LOGIN_USER_PERMISSION + userRequest.getUserId());
+        redisUtil.del(userInfoCacheKey, userPermissionCacheKey);
+        return true;
+    }
+
     /**
      * @Description: 从loginId中获取userId
      * @param loginId 登录ID
@@ -248,6 +259,13 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
         return userAddRequest;
     }
 
+    /**
+     * @Description: 加载登录结果
+     * @param userRequest 登录用户
+     * @Return: wang.zehui.self.cook.book.domain.response.LoginResultResponse
+     * @Author: wangzehui
+     * @Date: 2026/4/17 15:28
+     */
     private LoginResultResponse getLoginResult(UserRequest userRequest) {
         LoginResultResponse loginResultResponse = new LoginResultResponse();
         BeanUtils.copyProperties(userRequest, loginResultResponse);

@@ -41,4 +41,13 @@ public interface ILoginService {
      */
     UserRequest loadLoginInfo(User user);
 
+    /**
+     * @Description: 退出登录
+     * @param userRequest 用户信息
+     * @Return: java.lang.Boolean
+     * @Author: wangzehui
+     * @Date: 2026/4/17 15:36
+     */
+    Boolean logout(UserRequest userRequest);
+
 }
