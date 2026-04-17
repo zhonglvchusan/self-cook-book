@@ -43,5 +43,14 @@ public interface IRoleMenuService extends IService<RoleMenu> {
      * @Date: 2026/4/10 15:18
      */
     RoleMenuTreeResponse getRoleSelectedMenu(String roleId);
+
+    /**
+     * @Description: 通过角色id删除角色菜单
+     * @param roleId 角色id
+     * @Return: void
+     * @Author: wangzehui
+     * @Date: 2026/4/17 14:28
+     */
+    void removeByRoleId(String roleId);
 }
 

@@ -99,6 +99,12 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuDao, RoleMenu> impl
         return response;
     }
 
+    @Override
+    public void removeByRoleId(String roleId) {
+        this.remove(Wrappers.<RoleMenu>lambdaQuery()
+                .eq(RoleMenu::getRoleId, roleId));
+    }
+
     /**
      * @Description: 获取角色id所拥有的菜单id
      * @param roleIds 角色id列表

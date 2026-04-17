@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.dao.RoleDao;
@@ -13,11 +15,11 @@ import wang.zehui.self.cook.book.domain.request.RoleRequest;
 import wang.zehui.self.cook.book.domain.request.RoleSearchRequest;
 import wang.zehui.self.cook.book.domain.response.RoleInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RoleListResponse;
+import wang.zehui.self.cook.book.service.IRoleMenuService;
 import wang.zehui.self.cook.book.service.IRoleService;
 import org.springframework.stereotype.Service;
+import wang.zehui.self.cook.book.service.IRoleUserService;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -28,6 +30,12 @@ import java.util.Objects;
  */
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements IRoleService {
+
+    @Autowired
+    private IRoleUserService roleUserService;
+
+    @Autowired
+    private IRoleMenuService roleMenuService;
 
     @Override
     public Boolean saveOrUpdateRole(RoleRequest request) {
@@ -58,13 +66,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements IRole
     }
 
     @Override
+    @Transactional(rollbackFor = { Error.class, Exception.class, BusinessException.class})
     public Boolean deleteRole(String roleId) {
         Role role = this.getById(roleId);
         if (Objects.isNull(role)) {
             throw new BusinessException("角色不存在");
         }
 
-        // TODO 待补充：当角色下没有用户时才可以删除
+        roleUserService.removeByRoleId(roleId);
+        roleMenuService.removeByRoleId(roleId);
 
         return this.removeById(roleId);
     }
