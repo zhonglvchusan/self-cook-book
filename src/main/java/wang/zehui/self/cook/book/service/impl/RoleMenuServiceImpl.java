@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.utils.ConvertUtil;
+import wang.zehui.self.cook.book.dao.RoleDao;
 import wang.zehui.self.cook.book.dao.RoleMenuDao;
 import wang.zehui.self.cook.book.domain.entity.Menu;
 import wang.zehui.self.cook.book.domain.entity.Role;
@@ -18,7 +19,6 @@ import wang.zehui.self.cook.book.domain.response.RoleMenuTreeResponse;
 import wang.zehui.self.cook.book.service.IMenuService;
 import wang.zehui.self.cook.book.service.IRoleMenuService;
 import org.springframework.stereotype.Service;
-import wang.zehui.self.cook.book.service.IRoleService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuDao, RoleMenu> implements IRoleMenuService {
 
     @Autowired
-    private IRoleService roleService;
+    private RoleDao roleDao;
 
     @Autowired
     private IMenuService menuService;
@@ -41,7 +41,7 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuDao, RoleMenu> impl
     @Override
     @Transactional(rollbackFor = { Exception.class, Error.class, BusinessException.class})
     public Boolean updateRoleMenu(RoleMenuUpdateRequest request) {
-        Role role = roleService.getById(request.getRoleId());
+        Role role = roleDao.selectById(request.getRoleId());
         if (Objects.isNull(role)) {
             throw new BusinessException("角色不存在");
         }
