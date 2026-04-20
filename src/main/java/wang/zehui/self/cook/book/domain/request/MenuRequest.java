@@ -54,7 +54,7 @@ public class MenuRequest {
     private String apiPerms;
 
     @Schema(description = "权限类型")
-    private Boolean permsType;
+    private Integer permsType;
 
     @Schema(description = "前端权限字符串")
     private String webPerms;

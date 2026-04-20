@@ -37,7 +37,8 @@ public @interface CheckEnum {
      */
     boolean required() default false;
 
-    //Class<?>[] groups() default {};
+    // 以下不加会报错
+    Class<?>[] groups() default {};
 
-    //Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }
