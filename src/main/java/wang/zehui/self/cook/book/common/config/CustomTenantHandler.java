@@ -23,6 +23,10 @@ public class CustomTenantHandler implements TenantLineHandler {
 
     private final List<String> ignoreTableNames = new ArrayList<String>(){{
         add("t_user");
+        add("t_menu");
+        add("t_role");
+        add("t_role_user");
+        add("t_role_menu");
     }};
 
     @Override
