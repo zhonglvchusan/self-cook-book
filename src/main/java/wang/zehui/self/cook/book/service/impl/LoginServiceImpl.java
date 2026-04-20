@@ -266,7 +266,8 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
      * @Author: wangzehui
      * @Date: 2026/4/17 15:28
      */
-    private LoginResultResponse getLoginResult(UserRequest userRequest) {
+    @Override
+    public LoginResultResponse getLoginResult(UserRequest userRequest) {
         LoginResultResponse loginResultResponse = new LoginResultResponse();
         BeanUtils.copyProperties(userRequest, loginResultResponse);
 

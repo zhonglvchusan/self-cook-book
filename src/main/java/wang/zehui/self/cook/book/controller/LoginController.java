@@ -1,5 +1,6 @@
 package wang.zehui.self.cook.book.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,15 @@ public class LoginController {
     @NoNeedLogin
     public ResponseDTO<LoginResultResponse> login(@RequestBody @Validated LoginRequest loginRequest) {
         return ResponseDTO.success(loginService.login(loginRequest));
+    }
+
+    @GetMapping("/login/info")
+    @Operation(summary = "获取登录信息 @author wangzh")
+    public ResponseDTO<LoginResultResponse> getLoginInfo() {
+        String tokenValue = StpUtil.getTokenValue();
+        LoginResultResponse loginResult = loginService.getLoginResult(RequestUtil.getUserRequest());
+        loginResult.setToken(tokenValue);
+        return ResponseDTO.success(loginResult);
     }
 
     @GetMapping("/captcha")

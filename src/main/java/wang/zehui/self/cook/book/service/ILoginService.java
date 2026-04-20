@@ -23,6 +23,15 @@ public interface ILoginService {
     LoginResultResponse login(LoginRequest loginRequest);
 
     /**
+     * @Description: 获取登录信息
+     * @param userRequest 登录用户信息
+     * @Return: wang.zehui.self.cook.book.domain.response.LoginResultResponse
+     * @Author: wangzehui
+     * @Date: 2026/4/20 9:47
+     */
+    LoginResultResponse getLoginResult(UserRequest userRequest);
+
+    /**
      * @Description:
      * @param loginId
      * @param request
