@@ -330,14 +330,7 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
      * @Date: 2026/4/17 14:49
      */
     private synchronized UserPermission loadUserPermission(String userId) {
-        // 先查询缓存
-        String cacheKey = redisUtil.generateRedisKey(RedisKeyConst.ADMIN, RedisKeyConst.LOGIN_USER_PERMISSION + userId);
-        UserPermission userPermission = redisUtil.get(cacheKey, UserPermission.class);
-        if (!Objects.isNull(userPermission)) {
-            return userPermission;
-        }
-
-        userPermission = new UserPermission();
+        UserPermission userPermission = new UserPermission();
         userPermission.setPermissions(new ArrayList<>());
         userPermission.setRoles(new ArrayList<>());
 
@@ -356,7 +349,8 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
                 .flatMap(Arrays::stream)
                 .forEach(userPermission.getPermissions()::add);
 
-        // redis没有缓存，则设置缓存
+        // 设置缓存
+        String cacheKey = redisUtil.generateRedisKey(RedisKeyConst.ADMIN, RedisKeyConst.LOGIN_USER_PERMISSION + userId);
         redisUtil.set(cacheKey, userPermission, USER_LOGIN_INFO_EXPIRE_TIME);
 
         return userPermission;
