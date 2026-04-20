@@ -35,12 +35,4 @@ public class MybatisPlusConfig {
         interceptor.addInnerInterceptor(tenantLineInnerInterceptor);
         return interceptor;
     }
-
-    @Bean
-    public IdentifierGenerator idGenerator() {
-        return entity -> {
-            String bizKey = entity.getClass().getName();
-            return IdWorker.getId(bizKey);
-        };
-    }
 }
