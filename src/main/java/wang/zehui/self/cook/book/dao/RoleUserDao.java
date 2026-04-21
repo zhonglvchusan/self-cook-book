@@ -28,7 +28,7 @@ public interface RoleUserDao extends BaseMapper<RoleUser> {
      * @Author: wangzehui
      * @Date: 2026/4/17 9:58
      */
-    List<User> getRoleUserByName(@Param("request") RoleUserRequest request, @Param("page") Page<RoleUser> page);
+    Page<User> getRoleUserByName(@Param("request") RoleUserRequest request, @Param("page") Page<User> page);
 
     /**
      * @Description: 获取用户角色列表

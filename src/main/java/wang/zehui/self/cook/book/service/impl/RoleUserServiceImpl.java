@@ -10,6 +10,7 @@ import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.common.utils.SpringContextUtil;
 import wang.zehui.self.cook.book.dao.RoleUserDao;
 import wang.zehui.self.cook.book.domain.entity.RoleUser;
+import wang.zehui.self.cook.book.domain.entity.User;
 import wang.zehui.self.cook.book.domain.request.RoleUserRequest;
 import wang.zehui.self.cook.book.domain.request.RoleUserUpdateRequest;
 import wang.zehui.self.cook.book.domain.response.RoleInfoResponse;
@@ -35,7 +36,7 @@ public class RoleUserServiceImpl extends ServiceImpl<RoleUserDao, RoleUser> impl
 
     @Override
     public PageResult<UserListResponse> getUserPageList(RoleUserRequest request) {
-        Page<RoleUser> page = new Page<>(request.getPageNum(), request.getPageSize());
+        Page<User> page = new Page<>(request.getPageNum(), request.getPageSize());
         roleUserDao.getRoleUserByName(request, page);
 
         return PageResult.of(page, PageResult.easyBeanCopyFunction(UserListResponse::new));
