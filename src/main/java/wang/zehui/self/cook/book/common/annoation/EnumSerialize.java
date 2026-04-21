@@ -2,7 +2,7 @@ package wang.zehui.self.cook.book.common.annoation;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import wang.zehui.self.cook.book.common.domain.EnumSerializer;
+import wang.zehui.self.cook.book.common.domain.serializer.EnumSerializer;
 import wang.zehui.self.cook.book.common.enums.BaseEnum;
 
 import java.lang.annotation.ElementType;

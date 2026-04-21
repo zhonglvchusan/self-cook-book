@@ -1,4 +1,4 @@
-package wang.zehui.self.cook.book.common.domain;
+package wang.zehui.self.cook.book.common.domain.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
