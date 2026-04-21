@@ -15,7 +15,7 @@
         SELECT
             u.id,
             u.login_name,
-            u.avatar
+            u.avatar,
             u.nickname,
             u.real_name,
             u.phone_number,
