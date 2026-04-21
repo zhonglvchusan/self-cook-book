@@ -2,6 +2,8 @@ package wang.zehui.self.cook.book.common.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.RequestAttributes;
@@ -10,6 +12,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.SystemEnvironment;
 import wang.zehui.self.cook.book.domain.response.ResponseDTO;
+
+import java.util.stream.Collectors;
 
 /**
  * @Author wangzehui
@@ -36,6 +40,16 @@ public class GlobalExceptionConfig {
         }
 
         return ResponseDTO.error(e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseDTO<?> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+        log.error("参数校验异常,URL: {}", getCurrentRequestUrl(), e);
+        String message = e.getBindingResult().getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.joining(", "));
+
+        return ResponseDTO.error(message);
     }
 
     /**
