@@ -28,9 +28,6 @@ public class UserInfoResponse {
     @Schema(description = "登录账号")
     private String loginName;
 
-    @Schema(description = "登录密码")
-    private String loginPassword;
-
     @Schema(description = "头像")
     private String avatar;
 
