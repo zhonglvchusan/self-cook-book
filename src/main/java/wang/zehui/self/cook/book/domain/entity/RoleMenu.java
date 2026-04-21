@@ -1,8 +1,6 @@
 package wang.zehui.self.cook.book.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -41,6 +39,7 @@ public class RoleMenu {
     /**
      * 创建人id
      */
+    @TableField(fill = FieldFill.INSERT)
     private String createUserId;
 
     /**
@@ -51,6 +50,7 @@ public class RoleMenu {
     /**
      * 更新人id
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateUserId;
 
 }
