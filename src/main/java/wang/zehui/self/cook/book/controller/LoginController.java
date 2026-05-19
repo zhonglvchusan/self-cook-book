@@ -37,7 +37,7 @@ public class LoginController {
         return ResponseDTO.success(loginService.login(loginRequest));
     }
 
-    @GetMapping("/login/info")
+    @GetMapping("/info")
     @Operation(summary = "获取登录信息 @author wangzh")
     public ResponseDTO<LoginResultResponse> getLoginInfo() {
         String tokenValue = StpUtil.getTokenValue();
