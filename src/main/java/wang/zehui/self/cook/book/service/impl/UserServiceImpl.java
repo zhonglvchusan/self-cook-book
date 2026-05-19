@@ -1,7 +1,6 @@
 package wang.zehui.self.cook.book.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.PageResult;
+import wang.zehui.self.cook.book.common.enums.UserAdminFlagEnum;
 import wang.zehui.self.cook.book.common.utils.ConvertUtil;
 import wang.zehui.self.cook.book.dao.UserDao;
 import wang.zehui.self.cook.book.domain.entity.User;
@@ -23,8 +23,6 @@ import wang.zehui.self.cook.book.service.IUserService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * (User)表服务实现类
@@ -99,6 +97,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         LambdaQueryWrapper<User> queryWrapper = Wrappers.<User>lambdaQuery()
                 .eq(User::getDeleted, false)
                 .eq(!StringUtils.isBlank(request.getUserId()), User::getId, request.getUserId())
+                .ne(User::getAdminFlag, UserAdminFlagEnum.SUPER_ADMIN)
                 .like(!StringUtils.isBlank(request.getLoginName()), User::getLoginName, request.getLoginName())
                 .like(!StringUtils.isBlank(request.getNickname()), User::getNickname, request.getNickname())
                 .eq(!Objects.isNull(request.getGender()), User::getGender, request.getGender())

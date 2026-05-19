@@ -273,7 +273,7 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
 
         // 前端菜单和功能点清单
         List<RoleInfoResponse> roles = roleUserService.getRoleByUserId(userRequest.getUserId());
-        List<Menu> menus = roleMenuService.getMenuList(ConvertUtil.convertList(roles, RoleInfoResponse::getId), userRequest.getIsAdmin());
+        List<Menu> menus = roleMenuService.getMenuList(ConvertUtil.convertList(roles, RoleInfoResponse::getId), Objects.equals(UserAdminFlagEnum.SUPER_ADMIN.getCode(), userRequest.getAdminFlag()));
         loginResultResponse.setMenus(menus.stream()
                 .map(menu -> {
                     MenuInfoResponse menuInfoResponse = new MenuInfoResponse();
@@ -339,7 +339,7 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
         userPermission.getRoles().addAll(ConvertUtil.convertList(userRoles, RoleInfoResponse::getRoleCode));
 
         User user = userService.getById(userId);
-        List<Menu> menus = roleMenuService.getMenuList(ConvertUtil.convertList(userRoles, RoleInfoResponse::getId), !Objects.equals(UserAdminFlagEnum.USER.getCode(), user.getAdminFlag()));
+        List<Menu> menus = roleMenuService.getMenuList(ConvertUtil.convertList(userRoles, RoleInfoResponse::getId), Objects.equals(UserAdminFlagEnum.SUPER_ADMIN.getCode(), user.getAdminFlag()));
 
         // 添加用户权限
         menus.stream()

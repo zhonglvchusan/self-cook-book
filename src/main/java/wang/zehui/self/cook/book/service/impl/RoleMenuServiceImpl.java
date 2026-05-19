@@ -62,9 +62,9 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuDao, RoleMenu> impl
     }
 
     @Override
-    public List<Menu> getMenuList(List<String> roleIds, Boolean administratorFlag) {
+    public List<Menu> getMenuList(List<String> roleIds, Boolean superAdministratorFlag) {
         // 管理员，返回全部菜单
-        if (administratorFlag) {
+        if (superAdministratorFlag) {
             return menuService.list(Wrappers.<Menu>lambdaQuery()
                     .eq(Menu::getDeletedFlag, false));
         }

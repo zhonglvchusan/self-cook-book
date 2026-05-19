@@ -28,12 +28,12 @@ public interface IRoleMenuService extends IService<RoleMenu> {
     /**
      * @Description: 获取角色菜单列表
      * @param roleIds 角色ID列表
-     * @param administratorFlag 是否是管理员
+     * @param superAdministratorFlag 是否是超级管理员
      * @Return: java.util.List<wang.zehui.self.cook.book.domain.entity.Menu>
      * @Author: wangzehui
      * @Date: 2026/4/10 15:06
      */
-    List<Menu> getMenuList(List<String> roleIds, Boolean administratorFlag);
+    List<Menu> getMenuList(List<String> roleIds, Boolean superAdministratorFlag);
 
     /**
      * @Description: 获取角色已选菜单树
