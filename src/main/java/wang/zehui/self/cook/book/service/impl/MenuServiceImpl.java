@@ -72,8 +72,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuDao, Menu> implements IMenu
     @Override
     public List<MenuTreeResponse> getMenuTree() {
         List<Menu> menus = this.list(Wrappers.<Menu>lambdaQuery()
-                .eq(Menu::getDeletedFlag, false)
-                .in(Menu::getMenuType, MenuTypeEnum.CATALOG.getCode(), MenuTypeEnum.MENU.getCode()));
+                .eq(Menu::getDeletedFlag, false));
 
         return this.buildMenuTree(menus);
     }
