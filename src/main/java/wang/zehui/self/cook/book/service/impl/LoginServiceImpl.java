@@ -111,7 +111,7 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
             throw new BusinessException("用户已删除,请联系工作人员");
         }
 
-        if (Objects.equals(0, user.getState())) {
+        if (!Objects.equals(0, user.getState())) {
             throw new BusinessException("用户已禁用,请联系工作人员");
         }
 
