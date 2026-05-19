@@ -80,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
             throw new BusinessException("用户不存在");
         }
 
-        user.setState(!user.getState());
+        user.setState(Objects.equals(0, user.getState()) ? 1 : 0);
         return this.updateById(user);
     }
 

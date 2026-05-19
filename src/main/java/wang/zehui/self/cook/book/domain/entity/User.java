@@ -74,7 +74,7 @@ public class User {
     /**
      * 账号状态 0正常 1禁用
      */
-    private Boolean state;
+    private Integer state;
 
     /**
      * 管理员标识 0超级管理员 1普通管理员 2用户

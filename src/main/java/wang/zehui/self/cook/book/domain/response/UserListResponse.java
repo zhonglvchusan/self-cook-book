@@ -36,7 +36,7 @@ public class UserListResponse {
     private Integer gender;
 
     @Schema(description = "账号状态 0正常 1禁用")
-    private Boolean state;
+    private Integer state;
 
     @Schema(description = "备注")
     private String remark;
