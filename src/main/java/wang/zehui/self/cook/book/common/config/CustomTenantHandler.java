@@ -27,6 +27,7 @@ public class CustomTenantHandler implements TenantLineHandler {
         add("t_role");
         add("t_role_user");
         add("t_role_menu");
+        add("t_file");
     }};
 
     @Override
