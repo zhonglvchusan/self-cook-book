@@ -3,6 +3,7 @@ package wang.zehui.self.cook.book.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.domain.entity.User;
+import wang.zehui.self.cook.book.domain.request.ChangePasswordRequest;
 import wang.zehui.self.cook.book.domain.request.UserAddRequest;
 import wang.zehui.self.cook.book.domain.request.UserListRequest;
 import wang.zehui.self.cook.book.domain.request.UserUpdateRequest;
@@ -81,5 +82,14 @@ public interface IUserService extends IService<User> {
      * @Date: 2026/4/2 15:58
      */
     UserInfoResponse getUserInfo(String userId);
+
+    /**
+     * @Description: 修改密码
+     * @param request 修改密码请求
+     * @Return: java.lang.Boolean
+     * @Author: wangzehui
+     * @Date: 2026/5/28 16:22
+     */
+    Boolean changePassword(ChangePasswordRequest request);
 }
 

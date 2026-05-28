@@ -15,6 +15,7 @@ import wang.zehui.self.cook.book.common.consts.RedisKeyConst;
 import wang.zehui.self.cook.book.common.consts.StringConst;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.UserPermission;
+import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
 import wang.zehui.self.cook.book.common.enums.GenderEnum;
 import wang.zehui.self.cook.book.common.enums.LoginDeviceEnum;
 import wang.zehui.self.cook.book.common.enums.UserAdminFlagEnum;
@@ -112,7 +113,7 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
         }
 
         if (!Objects.equals(0, user.getState())) {
-            throw new BusinessException("用户已禁用,请联系工作人员");
+            throw new BusinessException(ErrorCodeEnum.USER_NOT_ACTIVE);
         }
 
         String saTokenLoginId = user.getAdminFlag() + StringConst.COLON + user.getId();

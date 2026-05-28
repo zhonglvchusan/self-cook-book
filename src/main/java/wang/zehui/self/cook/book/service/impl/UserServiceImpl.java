@@ -10,10 +10,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.PageResult;
+import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
 import wang.zehui.self.cook.book.common.enums.UserAdminFlagEnum;
 import wang.zehui.self.cook.book.common.utils.ConvertUtil;
+import wang.zehui.self.cook.book.common.utils.RequestUtil;
 import wang.zehui.self.cook.book.dao.UserDao;
 import wang.zehui.self.cook.book.domain.entity.User;
+import wang.zehui.self.cook.book.domain.request.ChangePasswordRequest;
 import wang.zehui.self.cook.book.domain.request.UserAddRequest;
 import wang.zehui.self.cook.book.domain.request.UserListRequest;
 import wang.zehui.self.cook.book.domain.request.UserUpdateRequest;
@@ -44,7 +47,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     public String registerUser(UserAddRequest userAddRequest) {
         User userDb = this.getByLoginName(userAddRequest.getLoginName());
         if (!Objects.isNull(userDb)) {
-            throw new BusinessException("登录名重复");
+            throw new BusinessException(ErrorCodeEnum.LOGIN_NAME_EXIST);
         }
 
         User user = new User();
@@ -77,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     public Boolean changeUserState(String userId) {
         User user = this.getById(userId);
         if (Objects.isNull(user)) {
-            throw new BusinessException("用户不存在");
+            throw new BusinessException(ErrorCodeEnum.USER_NOT_EXIST);
         }
 
         user.setState(Objects.equals(0, user.getState()) ? 1 : 0);
@@ -88,6 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     public Boolean updateUser(UserUpdateRequest userUpdateRequest) {
         User user = this.getById(userUpdateRequest.getUserId());
         BeanUtils.copyProperties(userUpdateRequest, user);
+        user.setLoginPassword(null);
 
         return this.updateById(user);
     }
@@ -114,7 +118,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     public UserInfoResponse getUserInfo(String userId) {
         User user = this.getById(userId);
         if (Objects.isNull(user)) {
-            throw new BusinessException("用户不存在");
+            throw new BusinessException(ErrorCodeEnum.USER_NOT_EXIST);
         }
 
         List<String> userIds = new ArrayList<>();
@@ -129,6 +133,39 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         response.setUpdateUserName(userNameMap.getOrDefault(user.getUpdateUserId(), null));
 
         return response;
+    }
+
+    @Override
+    public Boolean changePassword(ChangePasswordRequest request) {
+        User user = this.getById(RequestUtil.getUserId());
+
+        if (Objects.isNull(user)) {
+            throw new BusinessException(ErrorCodeEnum.USER_NOT_EXIST);
+        }
+
+        if (user.getDeleted()) {
+            throw new BusinessException(ErrorCodeEnum.USER_DELETED);
+        }
+
+        if (!Objects.equals(0, user.getState())) {
+            throw new BusinessException(ErrorCodeEnum.USER_NOT_ACTIVE);
+        }
+
+        // 校验原密码是否正确
+        String oldPasswordHex = DigestUtils.md5Hex(request.getOldPassword() + user.getLoginName());
+        if (!Objects.equals(user.getLoginPassword(), oldPasswordHex)) {
+            throw new BusinessException(ErrorCodeEnum.BEFORE_PASSWORD_ERROR);
+        }
+
+        // 校验是否一样的密码
+        String newPasswordHex = DigestUtils.md5Hex(request.getNewPassword() + user.getLoginName());
+        if (Objects.equals(user.getLoginPassword(), newPasswordHex)) {
+            throw new BusinessException(ErrorCodeEnum.PASSWORD_NOT_CHANGE);
+        }
+
+        return this.update(Wrappers.<User>lambdaUpdate()
+                .eq(User::getId, user.getId())
+                .set(User::getLoginPassword, newPasswordHex));
     }
 }
 

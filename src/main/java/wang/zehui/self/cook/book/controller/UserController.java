@@ -1,11 +1,11 @@
 package wang.zehui.self.cook.book.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
 import wang.zehui.self.cook.book.common.domain.PageResult;
+import wang.zehui.self.cook.book.domain.request.ChangePasswordRequest;
 import wang.zehui.self.cook.book.domain.request.UserAddRequest;
 import wang.zehui.self.cook.book.domain.request.UserListRequest;
 import wang.zehui.self.cook.book.domain.request.UserUpdateRequest;
@@ -16,7 +16,6 @@ import wang.zehui.self.cook.book.service.IUserService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * (User)表控制层
@@ -72,6 +71,12 @@ public class UserController {
     @SaCheckPermission("user:info")
     public ResponseDTO<UserInfoResponse> getUserInfo(@PathVariable String userId) {
         return ResponseDTO.success(userService.getUserInfo(userId));
+    }
+
+    @PostMapping("/change/password")
+    @Operation(summary = "修改密码 @author wangzh")
+    public ResponseDTO<Boolean> changePassword(@RequestBody @Validated ChangePasswordRequest request) {
+        return ResponseDTO.success(userService.changePassword(request));
     }
 
 }
