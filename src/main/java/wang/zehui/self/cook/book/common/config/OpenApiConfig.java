@@ -62,7 +62,7 @@ public class OpenApiConfig {
         return GroupedOpenApi.builder()
                 .group("后台管理接口")
                 .pathsToMatch("/**")
-                .pathsToExclude(SwaggerTagConst.API_PREFIX + "/**")
+                .pathsToExclude(SwaggerTagConst.ADMIN_PREFIX + "/**")
                 .addOperationCustomizer(new SelfOperationCustomizer())
                 .build();
     }

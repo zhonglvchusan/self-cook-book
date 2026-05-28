@@ -40,27 +40,27 @@ public class SelfOperationCustomizer implements OperationCustomizer {
         StringBuilder permissionStringBuilder = new StringBuilder();
         SaCheckPermission classPermissions = handlerMethod.getBeanType().getAnnotation(SaCheckPermission.class);
         if (!Objects.isNull(classPermissions)) {
-            permissionStringBuilder.append("<font style=\"color:red\" class=\"light-red\"");
+            permissionStringBuilder.append("<font style=\"color:red\" class=\"light-red\">");
             permissionStringBuilder.append("类: ").append(this.getAnnotationNote(classPermissions.value(), classPermissions.mode()));
             permissionStringBuilder.append("</font></br>");
         }
 
         SaCheckPermission methodAnnotation = handlerMethod.getMethodAnnotation(SaCheckPermission.class);
         if (!Objects.isNull(methodAnnotation)) {
-            permissionStringBuilder.append("<font style=\"color:red\" class=\"light-red\"");
+            permissionStringBuilder.append("<font style=\"color:red\" class=\"light-red\">");
             permissionStringBuilder.append("方法: ").append(this.getAnnotationNote(methodAnnotation.value(), methodAnnotation.mode()));
             permissionStringBuilder.append("</font></br>");
         }
 
         if (permissionStringBuilder.length() > 0) {
-            permissionStringBuilder.insert(0, "<font style=\"color:red\" class=\"light-red\">权限校验: </font></br>");
+            permissionStringBuilder.insert(0, "</br><font style=\"color:red\" class=\"light-red\">权限校验: </font></br>");
             values.add(permissionStringBuilder.toString());
         }
 
         StringBuilder roleStringBuilder = new StringBuilder();
         SaCheckRole classCheckRole = handlerMethod.getBeanType().getAnnotation(SaCheckRole.class);
         if (!Objects.isNull(classCheckRole)) {
-            roleStringBuilder.append("<font style=\"color:red\" class=\"light-red\"");
+            roleStringBuilder.append("<font style=\"color:red\" class=\"light-red\">");
             roleStringBuilder.append("类: ").append(this.getAnnotationNote(classCheckRole.value(), classCheckRole.mode()));
             roleStringBuilder.append("</font></br>");
         }
