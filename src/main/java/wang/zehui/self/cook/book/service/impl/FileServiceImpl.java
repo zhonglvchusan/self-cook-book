@@ -1,7 +1,10 @@
 package wang.zehui.self.cook.book.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
@@ -10,12 +13,16 @@ import wang.zehui.self.cook.book.common.utils.EnumUtil;
 import wang.zehui.self.cook.book.common.utils.FileUtil;
 import wang.zehui.self.cook.book.dao.FileDao;
 import wang.zehui.self.cook.book.domain.entity.File;
+import wang.zehui.self.cook.book.domain.response.FileDownloadResponse;
+import wang.zehui.self.cook.book.domain.response.FileResponse;
 import wang.zehui.self.cook.book.domain.response.FileUploadResponse;
 import wang.zehui.self.cook.book.service.IFileService;
 import org.springframework.stereotype.Service;
 import wang.zehui.self.cook.book.service.file.IFileStorageService;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 文件信息表(File)表服务实现类
@@ -75,5 +82,40 @@ public class FileServiceImpl extends ServiceImpl<FileDao, File> implements IFile
 
         return uploadResponse;
     }
+
+    @Override
+    public List<FileResponse> getFileUrls(List<String> fileKeys) {
+        if (CollectionUtils.isEmpty(fileKeys)) {
+            return Collections.emptyList();
+        }
+
+        // 查询数据库，并获取 file url
+        List<File> files = this.list(Wrappers.<File>lambdaQuery().in(File::getFileKey, fileKeys));
+        Map<String, FileResponse> fileMap = files.stream()
+                .map(file -> {
+                    FileResponse response = new FileResponse();
+                    BeanUtils.copyProperties(file, response);
+                    return response;
+                })
+                .collect(Collectors.toMap(FileResponse::getFileKey, Function.identity()));
+        for (FileResponse file : fileMap.values()) {
+            String fileUrl = fileStorageService.getFileUrl(file.getFileKey());
+            file.setFileUrl(fileUrl);
+        }
+
+        return new ArrayList<>(fileMap.values());
+    }
+
+    @Override
+    public FileDownloadResponse getDownloadFile(String fileKey) {
+        File file = this.getOne(Wrappers.<File>lambdaQuery()
+                .eq(File::getFileKey, fileKey));
+        if (Objects.isNull(file)) {
+            throw new BusinessException("文件不存在");
+        }
+
+        return fileStorageService.download(fileKey);
+    }
+
 }
 

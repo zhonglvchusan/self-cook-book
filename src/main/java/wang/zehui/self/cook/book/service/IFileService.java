@@ -2,9 +2,12 @@ package wang.zehui.self.cook.book.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
-import wang.zehui.self.cook.book.common.enums.FolderTypeEnum;
 import wang.zehui.self.cook.book.domain.entity.File;
+import wang.zehui.self.cook.book.domain.response.FileDownloadResponse;
+import wang.zehui.self.cook.book.domain.response.FileResponse;
 import wang.zehui.self.cook.book.domain.response.FileUploadResponse;
+
+import java.util.List;
 
 /**
  * 文件信息表(File)表服务接口
@@ -23,6 +26,24 @@ public interface IFileService extends IService<File> {
      * @Date: 2026/5/27 16:21
      */
     FileUploadResponse uploadFile(MultipartFile file, Integer folderType);
+
+    /**
+     * @Description: 根据文件key获取文件url
+     * @param fileKeys 文件key
+     * @Return: java.util.List<wang.zehui.self.cook.book.domain.response.FileResponse>
+     * @Author: wangzehui
+     * @Date: 2026/5/28 10:09
+     */
+    List<FileResponse> getFileUrls(List<String> fileKeys);
+
+    /**
+     * @Description: 下载文件
+     * @param fileKey 文件key
+     * @Return: wang.zehui.self.cook.book.domain.response.FileDownloadResponse
+     * @Author: wangzehui
+     * @Date: 2026/5/28 11:16
+     */
+    FileDownloadResponse getDownloadFile(String fileKey);
 
 }
 
