@@ -27,7 +27,6 @@ public class UserAddRequest {
     private String loginPassword;
 
     @Schema(description = "头像")
-    @NotBlank(message = "头像不能为空")
     private String avatar;
 
     @Schema(description = "昵称")
