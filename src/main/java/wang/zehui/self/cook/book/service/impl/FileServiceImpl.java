@@ -1,6 +1,8 @@
 package wang.zehui.self.cook.book.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -8,11 +10,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
+import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.common.enums.FolderTypeEnum;
 import wang.zehui.self.cook.book.common.utils.EnumUtil;
 import wang.zehui.self.cook.book.common.utils.FileUtil;
 import wang.zehui.self.cook.book.dao.FileDao;
 import wang.zehui.self.cook.book.domain.entity.File;
+import wang.zehui.self.cook.book.domain.request.FilePageRequest;
 import wang.zehui.self.cook.book.domain.response.FileDownloadResponse;
 import wang.zehui.self.cook.book.domain.response.FileResponse;
 import wang.zehui.self.cook.book.domain.response.FileUploadResponse;
@@ -115,6 +119,22 @@ public class FileServiceImpl extends ServiceImpl<FileDao, File> implements IFile
         }
 
         return fileStorageService.download(fileKey);
+    }
+
+    @Override
+    public PageResult<FileResponse> getFilePage(FilePageRequest request) {
+        LambdaQueryWrapper<File> queryWrapper = Wrappers.<File>lambdaQuery()
+                .eq(!Objects.isNull(request.getFolderType()), File::getFolderType, request.getFolderType())
+                .like(!StringUtils.isBlank(request.getFileName()), File::getFileName, request.getFileName())
+                .like(!StringUtils.isBlank(request.getFileKey()), File::getFileKey, request.getFileKey())
+                .like(!StringUtils.isBlank(request.getFileType()), File::getFileType, request.getFileType())
+                .ge(!Objects.isNull(request.getStartTime()), File::getCreateTime, request.getStartTime())
+                .le(!Objects.isNull(request.getEndTime()), File::getCreateTime, request.getEndTime());
+
+        Page<File> page = new Page<>(request.getPageNum(), request.getPageSize());
+        this.page(page, queryWrapper);
+
+        return PageResult.of(page, PageResult.easyBeanCopyFunction(FileResponse::new));
     }
 
 }

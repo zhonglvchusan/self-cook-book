@@ -2,7 +2,9 @@ package wang.zehui.self.cook.book.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
+import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.domain.entity.File;
+import wang.zehui.self.cook.book.domain.request.FilePageRequest;
 import wang.zehui.self.cook.book.domain.response.FileDownloadResponse;
 import wang.zehui.self.cook.book.domain.response.FileResponse;
 import wang.zehui.self.cook.book.domain.response.FileUploadResponse;
@@ -45,5 +47,13 @@ public interface IFileService extends IService<File> {
      */
     FileDownloadResponse getDownloadFile(String fileKey);
 
+    /**
+     * @Description: 获取文件分页列表
+     * @param request 文件分页请求
+     * @Return: wang.zehui.self.cook.book.common.domain.PageResult<wang.zehui.self.cook.book.domain.response.FileResponse>
+     * @Author: wangzehui
+     * @Date: 2026/5/29 15:27
+     */
+    PageResult<FileResponse> getFilePage(FilePageRequest request);
 }
 

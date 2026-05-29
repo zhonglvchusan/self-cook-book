@@ -1,9 +1,12 @@
 package wang.zehui.self.cook.book.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.multipart.MultipartFile;
+import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.common.utils.ResponseUtil;
+import wang.zehui.self.cook.book.domain.request.FilePageRequest;
 import wang.zehui.self.cook.book.domain.response.FileDownloadResponse;
 import wang.zehui.self.cook.book.domain.response.FileResponse;
 import wang.zehui.self.cook.book.domain.response.FileUploadResponse;
@@ -50,6 +53,13 @@ public class FileController {
         FileDownloadResponse downloadFile = fileService.getDownloadFile(fileKey);
         ResponseUtil.setDownloadFileHeader(response, downloadFile.getFileName(), downloadFile.getFileSize());
         response.getOutputStream().write(downloadFile.getData());
+    }
+
+    @Operation(summary = "获取文件列表: 分页 @author wangzh")
+    @GetMapping
+    @SaCheckPermission("file:list")
+    private ResponseDTO<PageResult<FileResponse>> getFilePage(FilePageRequest request) {
+        return ResponseDTO.success(fileService.getFilePage(request));
     }
 }
 
