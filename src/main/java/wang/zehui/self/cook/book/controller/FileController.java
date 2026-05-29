@@ -44,7 +44,7 @@ public class FileController {
     @GetMapping("/url")
     public ResponseDTO<String> getFileUrl(String fileKey) {
         List<FileResponse> fileUrls = fileService.getFileUrls(Collections.singletonList(fileKey));
-        return ResponseDTO.success(fileUrls.get(0).getFileUrl());
+        return ResponseDTO.success(ResponseDTO.SUCCESS_CODE, fileUrls.get(0).getFileUrl());
     }
 
     @Operation(summary = "下载文件流: 根据fileKey @author wangzh")
