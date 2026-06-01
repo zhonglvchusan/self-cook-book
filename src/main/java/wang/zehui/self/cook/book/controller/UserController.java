@@ -68,7 +68,6 @@ public class UserController {
 
     @GetMapping("/{userId}")
     @Operation(summary = "获取用户详情 @author wangzh")
-    @SaCheckPermission("user:info")
     public ResponseDTO<UserInfoResponse> getUserInfo(@PathVariable String userId) {
         return ResponseDTO.success(userService.getUserInfo(userId));
     }
