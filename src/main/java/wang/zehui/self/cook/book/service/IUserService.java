@@ -91,5 +91,14 @@ public interface IUserService extends IService<User> {
      * @Date: 2026/5/28 16:22
      */
     Boolean changePassword(ChangePasswordRequest request);
+
+    /**
+     * @Description: 重置密码
+     * @param userId 用户id
+     * @Return: java.lang.Boolean
+     * @Author: wangzehui
+     * @Date: 2026/6/1 14:12
+     */
+    Boolean resetPassword(String userId);
 }
 

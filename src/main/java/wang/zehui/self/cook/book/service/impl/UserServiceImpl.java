@@ -8,6 +8,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
@@ -36,6 +37,9 @@ import java.util.*;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUserService {
 
+    @Value("${common.initPassword:abc@123}")
+    private String initPassword;
+
     @Override
     public User getByLoginName(String loginName) {
         return this.getOne(Wrappers.<User>lambdaQuery()
@@ -53,11 +57,18 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         User user = new User();
         BeanUtils.copyProperties(userAddRequest, user);
 
+        String password = userAddRequest.getLoginPassword();
         // 没有填写注册密码
-        if (StringUtils.isBlank(userAddRequest.getLoginPassword())) {
-            String password = RandomStringUtils.randomAlphanumeric(8);
-            user.setLoginPassword(DigestUtils.md5Hex(password + user.getLoginName()));
+        if (StringUtils.isBlank(password)) {
+            // 没有openId，是后台创建用户，使用默认密码
+            if (StringUtils.isBlank(userAddRequest.getOpenId())) {
+                password = initPassword;
+            } else {
+                password = RandomStringUtils.randomAlphanumeric(8);
+            }
         }
+
+        user.setLoginPassword(DigestUtils.md5Hex(password + user.getLoginName()));
 
         user.setDeleted(false);
         this.save(user);
@@ -72,8 +83,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
             return true;
         }
 
-        user.setDeleted(true);
-        return this.updateById(user);
+        return this.removeById(userId);
     }
 
     @Override
@@ -99,7 +109,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     @Override
     public PageResult<UserListResponse> getUserList(UserListRequest request) {
         LambdaQueryWrapper<User> queryWrapper = Wrappers.<User>lambdaQuery()
-                .eq(User::getDeleted, false)
                 .eq(!StringUtils.isBlank(request.getUserId()), User::getId, request.getUserId())
                 .ne(User::getAdminFlag, UserAdminFlagEnum.SUPER_ADMIN)
                 .like(!StringUtils.isBlank(request.getLoginName()), User::getLoginName, request.getLoginName())
@@ -166,6 +175,27 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         return this.update(Wrappers.<User>lambdaUpdate()
                 .eq(User::getId, user.getId())
                 .set(User::getLoginPassword, newPasswordHex));
+    }
+
+    @Override
+    public Boolean resetPassword(String userId) {
+        User user = this.getById(userId);
+
+        if (Objects.isNull(user)) {
+            throw new BusinessException(ErrorCodeEnum.USER_NOT_EXIST);
+        }
+
+        if (user.getDeleted()) {
+            throw new BusinessException(ErrorCodeEnum.USER_DELETED);
+        }
+
+        if (!Objects.equals(0, user.getState())) {
+            throw new BusinessException(ErrorCodeEnum.USER_NOT_ACTIVE);
+        }
+
+        return this.update(Wrappers.<User>lambdaUpdate()
+                .eq(User::getId, user.getId())
+                .set(User::getLoginPassword, DigestUtils.md5Hex(initPassword + user.getLoginName())));
     }
 }
 

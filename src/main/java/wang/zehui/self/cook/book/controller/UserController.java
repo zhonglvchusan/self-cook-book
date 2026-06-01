@@ -79,5 +79,12 @@ public class UserController {
         return ResponseDTO.success(userService.changePassword(request));
     }
 
+    @PutMapping("/reset/password/{userId}")
+    @Operation(summary = "重置密码 @author wangzh")
+    @SaCheckPermission("user:reset")
+    public ResponseDTO<Boolean> resetPassword(@PathVariable String userId) {
+        return ResponseDTO.success(userService.resetPassword(userId));
+    }
+
 }
 
