@@ -55,5 +55,14 @@ public interface IFileService extends IService<File> {
      * @Date: 2026/5/29 15:27
      */
     PageResult<FileResponse> getFilePage(FilePageRequest request);
+
+    /**
+     * @Description: 删除文件
+     * @param fileKey 文件key
+     * @Return: java.lang.Boolean
+     * @Author: wangzehui
+     * @Date: 2026/6/1 14:54
+     */
+    Boolean deleteFile(String fileKey);
 }
 

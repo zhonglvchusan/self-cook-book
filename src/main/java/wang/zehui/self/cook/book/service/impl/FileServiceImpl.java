@@ -137,5 +137,11 @@ public class FileServiceImpl extends ServiceImpl<FileDao, File> implements IFile
         return PageResult.of(page, PageResult.easyBeanCopyFunction(FileResponse::new));
     }
 
+    @Override
+    public Boolean deleteFile(String fileKey) {
+        fileStorageService.delete(fileKey);
+        return this.removeById(fileKey);
+    }
+
 }
 

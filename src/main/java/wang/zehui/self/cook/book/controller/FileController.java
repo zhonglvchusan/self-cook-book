@@ -58,8 +58,15 @@ public class FileController {
     @Operation(summary = "获取文件列表: 分页 @author wangzh")
     @GetMapping
     @SaCheckPermission("file:list")
-    private ResponseDTO<PageResult<FileResponse>> getFilePage(FilePageRequest request) {
+    public ResponseDTO<PageResult<FileResponse>> getFilePage(FilePageRequest request) {
         return ResponseDTO.success(fileService.getFilePage(request));
+    }
+
+    @Operation(summary = "删除文件 @author wangzh")
+    @DeleteMapping
+    @SaCheckPermission("file:delete")
+    public ResponseDTO<Boolean> deleteFile(String fileKey) {
+        return ResponseDTO.success(fileService.deleteFile(fileKey));
     }
 }
 
