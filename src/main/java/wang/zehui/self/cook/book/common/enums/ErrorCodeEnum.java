@@ -11,6 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCodeEnum implements BaseEnum {
 
+    // 管理后台10000起
     LOGIN_STATE_INVALID(10001, "您还未登录或登录失效，请重新登录！"),
     NO_PERMISSION(10002, "对不起，您没有权限访问此内容！"),
     LOGIN_ACTIVE_TIMEOUT(10003, "长时间未操作，请重新登录"),
@@ -21,8 +22,14 @@ public enum ErrorCodeEnum implements BaseEnum {
     USER_DELETED(10008, "用户已删除,请联系工作人员"),
     BEFORE_PASSWORD_ERROR(10009, "原密码错误"),
     PASSWORD_NOT_CHANGE(10010, "原密码不能与新密码相同"),
+    LOGIN_NAME_OR_PASSWORD_ERROR(10011, "用户名或密码错误"),
+
+    // 对用户11000起
+    RESTAURANT_NOT_EXIST(11001, "餐厅不存在，请换一家吧~"),
+    RESTAURANT_NOT_PERMISSION(11002, "该餐厅不属于你，请勿使用违法手段修改他人餐厅，被查到会封禁账号哦！"),
 
 
+    // 系统错误50000起
     SYSTEM_ERROR(50001, "系统错误"),
 
     ;

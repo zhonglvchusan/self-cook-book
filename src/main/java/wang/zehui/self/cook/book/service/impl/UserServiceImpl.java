@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
@@ -48,10 +49,20 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     }
 
     @Override
+    public User getByOpenIdOrUnionId(Pair<String, String> userOpenIdAndUnionId) {
+        return this.getOne(Wrappers.<User>lambdaQuery()
+                .eq(User::getOpenId, userOpenIdAndUnionId.getLeft())
+                .or()
+                .eq(User::getUnionId, userOpenIdAndUnionId.getRight()));
+    }
+
+    @Override
     public String registerUser(UserAddRequest userAddRequest) {
-        User userDb = this.getByLoginName(userAddRequest.getLoginName());
-        if (!Objects.isNull(userDb)) {
-            throw new BusinessException(ErrorCodeEnum.LOGIN_NAME_EXIST);
+        if (!StringUtils.isBlank(userAddRequest.getLoginName())) {
+            User userDb = this.getByLoginName(userAddRequest.getLoginName());
+            if (!Objects.isNull(userDb)) {
+                throw new BusinessException(ErrorCodeEnum.LOGIN_NAME_EXIST);
+            }
         }
 
         User user = new User();

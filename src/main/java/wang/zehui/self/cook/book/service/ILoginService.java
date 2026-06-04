@@ -3,6 +3,7 @@ package wang.zehui.self.cook.book.service;
 import wang.zehui.self.cook.book.domain.entity.User;
 import wang.zehui.self.cook.book.domain.request.LoginRequest;
 import wang.zehui.self.cook.book.domain.request.UserRequest;
+import wang.zehui.self.cook.book.domain.request.WxLoginRequest;
 import wang.zehui.self.cook.book.domain.response.LoginResultResponse;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,15 @@ public interface ILoginService {
      * @Date: 2025/11/6 12:00
      */
     LoginResultResponse login(LoginRequest loginRequest);
+
+    /**
+     * @Description: 微信登录
+     * @param loginRequest 微信登录参数
+     * @Return: wang.zehui.self.cook.book.domain.response.LoginResultResponse
+     * @Author: wangzehui
+     * @Date: 2026/6/4 10:06
+     */
+    LoginResultResponse wxLogin(WxLoginRequest loginRequest);
 
     /**
      * @Description: 获取登录信息

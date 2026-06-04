@@ -1,6 +1,7 @@
 package wang.zehui.self.cook.book.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.commons.lang3.tuple.Pair;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.domain.entity.User;
 import wang.zehui.self.cook.book.domain.request.ChangePasswordRequest;
@@ -26,6 +27,15 @@ public interface IUserService extends IService<User> {
      * @Date: 2026/3/26 16:59
      */
     User getByLoginName(String loginName);
+
+    /**
+     * @Description: 通过openId或者unionId获取用户信息
+     * @param userOpenIdAndUnionId 用户openId和unionId
+     * @Return: wang.zehui.self.cook.book.domain.entity.User
+     * @Author: wangzehui
+     * @Date: 2026/6/4 10:13
+     */
+    User getByOpenIdOrUnionId(Pair<String, String> userOpenIdAndUnionId);
 
     /**
      * @Description: 注册用户

@@ -26,6 +26,7 @@ import wang.zehui.self.cook.book.domain.entity.User;
 import wang.zehui.self.cook.book.domain.request.LoginRequest;
 import wang.zehui.self.cook.book.domain.request.UserAddRequest;
 import wang.zehui.self.cook.book.domain.request.UserRequest;
+import wang.zehui.self.cook.book.domain.request.WxLoginRequest;
 import wang.zehui.self.cook.book.domain.response.LoginResultResponse;
 import wang.zehui.self.cook.book.domain.response.MenuInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RoleInfoResponse;
@@ -70,69 +71,38 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
 
     @Override
     public LoginResultResponse login(LoginRequest loginRequest) {
-        LoginDeviceEnum loginDeviceEnum = LoginDeviceEnum.getEnumByType(loginRequest.getLoginDevice());
-        if (Objects.isNull(loginDeviceEnum)) {
-            throw new BusinessException("登录设备不支持!");
-        }
+        LoginDeviceEnum loginDeviceEnum = this.checkLoginDevice(loginRequest.getLoginDevice());
 
-        Pair<String, String> userOpenIdAndUnionId = Pair.of(StringConst.EMPTY, StringConst.EMPTY);
-        // 不需要向小程序换手机号，则获取验证码
-        if (!loginRequest.getMiniAppFlag()) {
-            this.valid(loginRequest, LoginRequest.AdminGroup.class);
-            // 验证验证码是否正确
-            captchaService.checkCaptcha(loginRequest.getCaptchaRequest());
-        } else {
-            this.valid(loginRequest, LoginRequest.ApiGroup.class);
-            // 向微信换取用户手机号
-            String userLoginName = wxService.getUserPhoneNumberByCode(loginRequest.getPhoneCode());
-            loginRequest.setLoginName(userLoginName);
-            userOpenIdAndUnionId = wxService.getUserOpenIdAndUnionId(loginRequest.getLoginCode());
-        }
+        // 验证验证码是否正确
+        captchaService.checkCaptcha(loginRequest.getCaptchaRequest());
 
         User user = userService.getByLoginName(loginRequest.getLoginName());
 
-        // 如果没查到用户，且是微信登录，则自动创建用户
+        if (!Objects.equals(DigestUtils.md5Hex(loginRequest.getPassword() + loginRequest.getLoginName()), user.getLoginPassword())) {
+            throw new BusinessException(ErrorCodeEnum.LOGIN_NAME_OR_PASSWORD_ERROR);
+        }
+
+        return this.login(user, loginDeviceEnum);
+    }
+
+    @Override
+    public LoginResultResponse wxLogin(WxLoginRequest loginRequest) {
+        LoginDeviceEnum loginDeviceEnum = this.checkLoginDevice(loginRequest.getLoginDevice());
+
+        // 向微信换取用户手机号，个人版不支持，登陆后让用户自己添加手机号
+        // String userLoginName = wxService.getUserPhoneNumberByCode(loginRequest.getPhoneCode());
+        // loginRequest.setLoginName(userLoginName);
+        // 向微信换取用户openId
+        Pair<String, String> userOpenIdAndUnionId = wxService.getUserOpenIdAndUnionId(loginRequest.getLoginCode());
+        User user = userService.getByOpenIdOrUnionId(userOpenIdAndUnionId);
+        // 如果没查到用户，则自动创建用户
         if (Objects.isNull(user)) {
-            if (!loginRequest.getMiniAppFlag()) {
-                throw new BusinessException("登录名或密码错误");
-            }
-            UserAddRequest userAddRequest = this.buildMiniAppAddUser(loginRequest.getLoginName(), userOpenIdAndUnionId);
+            UserAddRequest userAddRequest = this.buildMiniAppAddUser(userOpenIdAndUnionId);
             userService.registerUser(userAddRequest);
-            user = userService.getByLoginName(loginRequest.getLoginName());
+            user = userService.getByOpenIdOrUnionId(userOpenIdAndUnionId);
         }
 
-        if (!loginRequest.getMiniAppFlag()) {
-            if (!Objects.equals(DigestUtils.md5Hex(loginRequest.getPassword() + loginRequest.getLoginName()), user.getLoginPassword())) {
-                throw new BusinessException("登录名或密码错误");
-            }
-        }
-
-        // 验证用户状态
-        if (user.getDeleted()) {
-            throw new BusinessException("用户已删除,请联系工作人员");
-        }
-
-        if (!Objects.equals(0, user.getState())) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_ACTIVE);
-        }
-
-        String saTokenLoginId = user.getAdminFlag() + StringConst.COLON + user.getId();
-
-        // 登录
-        StpUtil.login(saTokenLoginId, String.valueOf(loginDeviceEnum.getDescription()));
-
-        // 获取登录信息
-        UserRequest userRequest = this.loadLoginInfo(user);
-
-        // 获取登录结果
-        String token = StpUtil.getTokenValue();
-        LoginResultResponse loginResult = this.getLoginResult(userRequest);
-
-        // 设置token
-        loginResult.setToken(token);
-
-        this.loadUserPermission(user.getId());
-        return loginResult;
+        return this.login(user, loginDeviceEnum);
     }
 
     @Override
@@ -223,39 +193,18 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
     }
 
     /**
-     * @Description: 校验对象指定的校验组
-     * @param validObject 需要校验的对象
-     * @param validGroup 校验组
-     * @Return: void
-     * @Author: wangzehui
-     * @Date: 2026/3/26 17:04
-     */
-    private void valid(Object validObject, Class<?> validGroup) {
-        Set<ConstraintViolation<Object>> validate = validator.validate(validObject, validGroup);
-        if (!CollectionUtils.isEmpty(validate)) {
-            String message = validate.stream()
-                    .map(ConstraintViolation::getMessage)
-                    .collect(Collectors.joining(","));
-            throw new BusinessException(message);
-        }
-    }
-
-    /**
      * @Description: 构建增加小程序用户表单
-     * @param phoneNumber 用户手机号
      * @param userOpenIdAndUnionId 微信小程序返回的openId和unionId
      * @Return: wang.zehui.self.cook.book.domain.request.UserAddRequest
      * @Author: wangzehui
      * @Date: 2026/3/26 17:06
      */
-    private UserAddRequest buildMiniAppAddUser(String phoneNumber, Pair<String, String> userOpenIdAndUnionId) {
+    private UserAddRequest buildMiniAppAddUser(Pair<String, String> userOpenIdAndUnionId) {
         UserAddRequest userAddRequest = new UserAddRequest();
-        userAddRequest.setLoginName(phoneNumber);
         userAddRequest.setOpenId(userOpenIdAndUnionId.getLeft());
         userAddRequest.setUnionId(userOpenIdAndUnionId.getRight());
-        userAddRequest.setNickname("微信用户" + phoneNumber.substring(7));
+        userAddRequest.setNickname("微信用户" + UUID.randomUUID().toString().substring(0, 6));
         userAddRequest.setGender(GenderEnum.UNKNOWN.getValue());
-        userAddRequest.setPhoneNumber(phoneNumber);
         userAddRequest.setAdminFlag(2);
         return userAddRequest;
     }
@@ -355,5 +304,51 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
         redisUtil.set(cacheKey, userPermission, USER_LOGIN_INFO_EXPIRE_TIME);
 
         return userPermission;
+    }
+
+    /**
+     * @Description: 校验登录设备，校验通过返回对应设备的枚举，未通过则抛出异常
+     * @param loginDevice 登录设备
+     * @Return: wang.zehui.self.cook.book.common.enums.LoginDeviceEnum
+     * @Author: wangzehui
+     * @Date: 2026/6/4 10:08
+     */
+    private LoginDeviceEnum checkLoginDevice(Integer loginDevice) {
+        LoginDeviceEnum loginDeviceEnum = LoginDeviceEnum.getEnumByType(loginDevice);
+        if (Objects.isNull(loginDeviceEnum)) {
+            throw new BusinessException("登录设备不支持!");
+        }
+
+        return loginDeviceEnum;
+    }
+
+    private LoginResultResponse login(User user, LoginDeviceEnum loginDeviceEnum) {
+        // 验证用户状态
+        if (user.getDeleted()) {
+            throw new BusinessException(ErrorCodeEnum.USER_DELETED);
+        }
+
+        if (!Objects.equals(0, user.getState())) {
+            throw new BusinessException(ErrorCodeEnum.USER_NOT_ACTIVE);
+        }
+
+        String saTokenLoginId = user.getAdminFlag() + StringConst.COLON + user.getId();
+
+        // 登录
+        StpUtil.login(saTokenLoginId, String.valueOf(loginDeviceEnum.getDescription()));
+
+        // 获取登录信息
+        UserRequest userRequest = this.loadLoginInfo(user);
+
+        // 获取登录结果
+        String token = StpUtil.getTokenValue();
+        LoginResultResponse loginResult = this.getLoginResult(userRequest);
+
+        // 设置token
+        loginResult.setToken(token);
+
+        this.loadUserPermission(user.getId());
+
+        return loginResult;
     }
 }
