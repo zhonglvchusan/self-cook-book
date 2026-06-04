@@ -17,6 +17,7 @@ import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import wang.zehui.self.cook.book.common.consts.DateFormatConst;
+import wang.zehui.self.cook.book.common.consts.InterfacePackageConst;
 import wang.zehui.self.cook.book.common.domain.serializer.EmptyStringToNullDeserializer;
 import wang.zehui.self.cook.book.common.domain.serializer.LongJsonSerializer;
 import wang.zehui.self.cook.book.common.interceptor.AuthInterceptor;
@@ -49,9 +50,9 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         configurer.addPathPrefix("/admin", c ->
-                c.getPackage().getName().equalsIgnoreCase("wang.zehui.self.cook.book.controller"));
+                c.getPackage().getName().equalsIgnoreCase(InterfacePackageConst.ADMIN_PACKAGE));
         configurer.addPathPrefix("/api", c ->
-                c.getPackage().getName().equalsIgnoreCase("wang.zehui.self.cook.book.controller.api"));
+                c.getPackage().getName().equalsIgnoreCase(InterfacePackageConst.API_PACKAGE));
     }
 
     @Bean
