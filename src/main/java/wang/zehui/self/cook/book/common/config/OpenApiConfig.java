@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import wang.zehui.self.cook.book.common.consts.HeaderConst;
+import wang.zehui.self.cook.book.common.consts.InterfacePackageConst;
 import wang.zehui.self.cook.book.common.consts.SwaggerTagConst;
 import wang.zehui.self.cook.book.common.domain.SelfOperationCustomizer;
 
@@ -61,8 +62,8 @@ public class OpenApiConfig {
     public GroupedOpenApi adminApi() {
         return GroupedOpenApi.builder()
                 .group("后台管理接口")
-                .pathsToMatch("/**")
-                .pathsToExclude(SwaggerTagConst.ADMIN_PREFIX + "/**")
+                .packagesToScan(InterfacePackageConst.ADMIN_PACKAGE)
+                .packagesToExclude(InterfacePackageConst.API_PACKAGE)
                 .addOperationCustomizer(new SelfOperationCustomizer())
                 .build();
     }
@@ -71,7 +72,7 @@ public class OpenApiConfig {
     public GroupedOpenApi apiApi() {
         return GroupedOpenApi.builder()
                 .group("api接口")
-                .pathsToMatch(SwaggerTagConst.API_PREFIX + "/**")
+                .packagesToScan(InterfacePackageConst.API_PACKAGE)
                 .addOperationCustomizer(new SelfOperationCustomizer())
                 .build();
     }
