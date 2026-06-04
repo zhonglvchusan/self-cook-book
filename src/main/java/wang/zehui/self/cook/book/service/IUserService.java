@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.commons.lang3.tuple.Pair;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.domain.entity.User;
-import wang.zehui.self.cook.book.domain.request.ChangePasswordRequest;
-import wang.zehui.self.cook.book.domain.request.UserAddRequest;
-import wang.zehui.self.cook.book.domain.request.UserListRequest;
-import wang.zehui.self.cook.book.domain.request.UserUpdateRequest;
+import wang.zehui.self.cook.book.domain.request.*;
 import wang.zehui.self.cook.book.domain.response.UserInfoResponse;
 import wang.zehui.self.cook.book.domain.response.UserListResponse;
 
@@ -110,5 +107,14 @@ public interface IUserService extends IService<User> {
      * @Date: 2026/6/1 14:12
      */
     Boolean resetPassword(String userId);
+
+    /**
+     * @Description: 更新用户信息
+     * @param request 修改用户信息表单
+     * @Return: java.lang.Boolean
+     * @Author: wangzehui
+     * @Date: 2026/6/4 15:39
+     */
+    Boolean updateUser(ApiUserUpdateRequest request);
 }
 

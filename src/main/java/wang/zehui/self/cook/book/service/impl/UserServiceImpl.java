@@ -9,19 +9,19 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import wang.zehui.self.cook.book.common.consts.RedisKeyConst;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
 import wang.zehui.self.cook.book.common.enums.UserAdminFlagEnum;
 import wang.zehui.self.cook.book.common.utils.ConvertUtil;
+import wang.zehui.self.cook.book.common.utils.RedisUtil;
 import wang.zehui.self.cook.book.common.utils.RequestUtil;
 import wang.zehui.self.cook.book.dao.UserDao;
 import wang.zehui.self.cook.book.domain.entity.User;
-import wang.zehui.self.cook.book.domain.request.ChangePasswordRequest;
-import wang.zehui.self.cook.book.domain.request.UserAddRequest;
-import wang.zehui.self.cook.book.domain.request.UserListRequest;
-import wang.zehui.self.cook.book.domain.request.UserUpdateRequest;
+import wang.zehui.self.cook.book.domain.request.*;
 import wang.zehui.self.cook.book.domain.response.UserInfoResponse;
 import wang.zehui.self.cook.book.domain.response.UserListResponse;
 import wang.zehui.self.cook.book.service.IUserService;
@@ -40,6 +40,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
     @Value("${common.initPassword:abc@123}")
     private String initPassword;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public User getByLoginName(String loginName) {
@@ -114,7 +117,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         BeanUtils.copyProperties(userUpdateRequest, user);
         user.setLoginPassword(null);
 
-        return this.updateById(user);
+        this.updateById(user);
+
+        String cacheKey = redisUtil.generateRedisKey(RedisKeyConst.ADMIN, RedisKeyConst.REQUEST_USER + userUpdateRequest.getUserId());
+        redisUtil.del(cacheKey);
+        return true;
     }
 
     @Override
@@ -207,6 +214,29 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         return this.update(Wrappers.<User>lambdaUpdate()
                 .eq(User::getId, user.getId())
                 .set(User::getLoginPassword, DigestUtils.md5Hex(initPassword + user.getLoginName())));
+    }
+
+    @Override
+    public Boolean updateUser(ApiUserUpdateRequest request) {
+        String userId = RequestUtil.getUserId();
+        User user = this.getById(userId);
+        if (user.getDeleted()) {
+            throw new BusinessException(ErrorCodeEnum.USER_NOT_EXIST);
+        }
+
+        if (!Objects.equals(0, user.getState())) {
+            throw new BusinessException(ErrorCodeEnum.USER_NOT_ACTIVE);
+        }
+
+        BeanUtils.copyProperties(request, user);
+        user.setState(null);
+        user.setDeleted(null);
+
+        this.updateById(user);
+
+        String cacheKey = redisUtil.generateRedisKey(RedisKeyConst.API, RedisKeyConst.REQUEST_USER + userId);
+        redisUtil.del(cacheKey);
+        return true;
     }
 }
 
