@@ -29,6 +29,7 @@ public enum ErrorCodeEnum implements BaseEnum {
     RESTAURANT_NOT_PERMISSION(11002, "该餐厅不属于你，请勿使用违法手段修改他人餐厅，被查到会封禁账号哦！"),
     PHONE_NUMBER_EXIST(11003, "手机号已存在"),
     EMAIL_NOT_EXIST(11004, "邮箱不存在"),
+    USER_RESTAURANT_NOT_EXIST(11005, "您当前还没有开餐厅，请投资一家吧~"),
 
 
     // 系统错误50000起
