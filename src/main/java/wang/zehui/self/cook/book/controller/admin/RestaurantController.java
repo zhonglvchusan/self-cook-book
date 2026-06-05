@@ -1,4 +1,4 @@
-package wang.zehui.self.cook.book.controller;
+package wang.zehui.self.cook.book.controller.admin;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import wang.zehui.self.cook.book.service.IRestaurantService;

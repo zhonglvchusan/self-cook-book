@@ -22,4 +22,7 @@ public class EmailServerProperties {
 
     @Schema(description = "邮箱密码")
     private String password;
+
+    @Schema(description = "发件人昵称")
+    private String name;
 }

@@ -8,5 +8,7 @@ public class InterfacePackageConst {
 
     public static final String API_PACKAGE = "wang.zehui.self.cook.book.controller.api";
 
-    public static final String ADMIN_PACKAGE = "wang.zehui.self.cook.book.controller";
+    public static final String ADMIN_PACKAGE = "wang.zehui.self.cook.book.controller.admin";
+
+    public static final String COMMON_PACKAGE = "wang.zehui.self.cook.book.controller";
 }

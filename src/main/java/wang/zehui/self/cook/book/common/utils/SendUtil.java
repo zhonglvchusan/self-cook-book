@@ -8,6 +8,7 @@ import wang.zehui.self.cook.book.domain.response.CaptchaResponse;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
@@ -44,14 +45,14 @@ public class SendUtil {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(properties.getUser()));
+            message.setFrom(new InternetAddress(properties.getUser(), properties.getName(), StandardCharsets.UTF_8.name()));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(request.getEmailAddress()));
             message.setSubject("专属菜单登录验证码");
             CaptchaResponse captcha = request.getCaptcha();
             message.setText(String.format(VALID_CODE_MESSAGE, captcha.getCaptchaCode(), captcha.getExpireSeconds()));
 
             Transport.send(message);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             log.error("发送邮箱验证码失败", e);
             e.printStackTrace();
         }

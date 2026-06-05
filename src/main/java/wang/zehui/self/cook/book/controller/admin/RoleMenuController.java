@@ -1,4 +1,4 @@
-package wang.zehui.self.cook.book.controller;
+package wang.zehui.self.cook.book.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import io.swagger.v3.oas.annotations.Operation;

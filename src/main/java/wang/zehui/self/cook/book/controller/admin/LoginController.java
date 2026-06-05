@@ -1,4 +1,4 @@
-package wang.zehui.self.cook.book.controller;
+package wang.zehui.self.cook.book.controller.admin;
 
 import cn.dev33.satoken.stp.StpUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import wang.zehui.self.cook.book.common.annoation.NoNeedLogin;
 import wang.zehui.self.cook.book.common.utils.RequestUtil;
 import wang.zehui.self.cook.book.domain.request.LoginRequest;
-import wang.zehui.self.cook.book.domain.request.WxLoginRequest;
 import wang.zehui.self.cook.book.domain.response.CaptchaResponse;
 import wang.zehui.self.cook.book.domain.response.LoginResultResponse;
 import wang.zehui.self.cook.book.domain.response.ResponseDTO;
@@ -28,9 +27,6 @@ public class LoginController {
     @Autowired
     private ILoginService loginService;
 
-    @Autowired
-    private ICaptchaService captchaService;
-
     @PostMapping
     @Operation(summary = "登录 @author wangzh")
     @NoNeedLogin
@@ -45,13 +41,6 @@ public class LoginController {
         LoginResultResponse loginResult = loginService.getLoginResult(RequestUtil.getUserRequest());
         loginResult.setToken(tokenValue);
         return ResponseDTO.success(loginResult);
-    }
-
-    @GetMapping("/captcha")
-    @Operation(summary = "获取验证码 @author wangzh")
-    @NoNeedLogin
-    public ResponseDTO<CaptchaResponse> getCaptcha() {
-        return ResponseDTO.success(captchaService.generateCaptcha());
     }
 
     @GetMapping("/logout")

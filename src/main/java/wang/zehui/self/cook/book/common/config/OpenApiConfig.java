@@ -73,6 +73,17 @@ public class OpenApiConfig {
         return GroupedOpenApi.builder()
                 .group("api接口")
                 .packagesToScan(InterfacePackageConst.API_PACKAGE)
+                .packagesToExclude(InterfacePackageConst.ADMIN_PACKAGE)
+                .addOperationCustomizer(new SelfOperationCustomizer())
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi commonApi() {
+        return GroupedOpenApi.builder()
+                .group("公用接口")
+                .packagesToScan(InterfacePackageConst.COMMON_PACKAGE)
+                .packagesToExclude(InterfacePackageConst.ADMIN_PACKAGE, InterfacePackageConst.API_PACKAGE)
                 .addOperationCustomizer(new SelfOperationCustomizer())
                 .build();
     }

@@ -39,6 +39,7 @@ public class ApiUserController {
 
     @PostMapping("/change/password")
     @Operation(summary = "修改密码 @author wangzh")
+    @NoNeedLogin
     public ResponseDTO<Boolean> changePassword(@RequestBody @Validated ForgetPasswordRequest request) {
         return ResponseDTO.success(userService.forgetPassword(request));
     }
