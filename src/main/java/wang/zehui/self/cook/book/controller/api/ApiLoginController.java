@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import wang.zehui.self.cook.book.common.annoation.NoNeedLogin;
 import wang.zehui.self.cook.book.common.utils.RequestUtil;
 import wang.zehui.self.cook.book.domain.request.WxLoginRequest;
+import wang.zehui.self.cook.book.domain.request.WxPhoneLoginRequest;
 import wang.zehui.self.cook.book.domain.response.LoginResultResponse;
 import wang.zehui.self.cook.book.domain.response.ResponseDTO;
 import wang.zehui.self.cook.book.service.ILoginService;
@@ -30,6 +31,13 @@ public class ApiLoginController {
     @NoNeedLogin
     public ResponseDTO<LoginResultResponse> wxLogin(@RequestBody @Validated WxLoginRequest loginRequest) {
         return ResponseDTO.success(loginService.wxLogin(loginRequest));
+    }
+
+    @PostMapping("/phone")
+    @Operation(summary = "微信手机号登录 @author wangzh")
+    @NoNeedLogin
+    public ResponseDTO<LoginResultResponse> wxPhoneLogin(@RequestBody @Validated WxPhoneLoginRequest request) {
+        return ResponseDTO.success(loginService.wxPhoneLogin(request));
     }
 
     @GetMapping("/info")

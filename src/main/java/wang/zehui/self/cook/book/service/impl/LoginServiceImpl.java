@@ -23,10 +23,7 @@ import wang.zehui.self.cook.book.common.utils.ConvertUtil;
 import wang.zehui.self.cook.book.common.utils.RedisUtil;
 import wang.zehui.self.cook.book.domain.entity.Menu;
 import wang.zehui.self.cook.book.domain.entity.User;
-import wang.zehui.self.cook.book.domain.request.LoginRequest;
-import wang.zehui.self.cook.book.domain.request.UserAddRequest;
-import wang.zehui.self.cook.book.domain.request.UserRequest;
-import wang.zehui.self.cook.book.domain.request.WxLoginRequest;
+import wang.zehui.self.cook.book.domain.request.*;
 import wang.zehui.self.cook.book.domain.response.LoginResultResponse;
 import wang.zehui.self.cook.book.domain.response.MenuInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RoleInfoResponse;
@@ -103,6 +100,13 @@ public class LoginServiceImpl implements ILoginService, StpInterface {
         }
 
         return this.login(user, loginDeviceEnum);
+    }
+
+    @Override
+    public LoginResultResponse wxPhoneLogin(WxPhoneLoginRequest phoneLoginRequest) {
+        LoginRequest loginRequest = new LoginRequest();
+        BeanUtils.copyProperties(phoneLoginRequest, loginRequest);
+        return this.login(loginRequest);
     }
 
     @Override

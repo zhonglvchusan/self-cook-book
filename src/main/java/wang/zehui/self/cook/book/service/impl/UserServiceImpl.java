@@ -218,6 +218,14 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
     @Override
     public Boolean updateUser(ApiUserUpdateRequest request) {
+        // 校验手机号是否存在
+        if (!StringUtils.isBlank(request.getPhoneNumber())) {
+            User user = this.getByLoginName(request.getPhoneNumber());
+            if (!Objects.isNull(user)) {
+                throw new BusinessException(ErrorCodeEnum.PHONE_NUMBER_EXIST);
+            }
+        }
+
         String userId = RequestUtil.getUserId();
         User user = this.getById(userId);
         if (user.getDeleted()) {
@@ -229,6 +237,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         }
 
         BeanUtils.copyProperties(request, user);
+        user.setLoginName(request.getPhoneNumber());
         user.setState(null);
         user.setDeleted(null);
 
