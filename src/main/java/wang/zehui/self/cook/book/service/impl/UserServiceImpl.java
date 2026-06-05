@@ -16,14 +16,18 @@ import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
 import wang.zehui.self.cook.book.common.enums.UserAdminFlagEnum;
+import wang.zehui.self.cook.book.common.properties.EmailServerProperties;
 import wang.zehui.self.cook.book.common.utils.ConvertUtil;
 import wang.zehui.self.cook.book.common.utils.RedisUtil;
 import wang.zehui.self.cook.book.common.utils.RequestUtil;
+import wang.zehui.self.cook.book.common.utils.SendUtil;
 import wang.zehui.self.cook.book.dao.UserDao;
 import wang.zehui.self.cook.book.domain.entity.User;
 import wang.zehui.self.cook.book.domain.request.*;
+import wang.zehui.self.cook.book.domain.response.CaptchaResponse;
 import wang.zehui.self.cook.book.domain.response.UserInfoResponse;
 import wang.zehui.self.cook.book.domain.response.UserListResponse;
+import wang.zehui.self.cook.book.service.ICaptchaService;
 import wang.zehui.self.cook.book.service.IUserService;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +47,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private ICaptchaService captchaService;
+
+    @Autowired
+    private EmailServerProperties emailServerProperties;
 
     @Override
     public User getByLoginName(String loginName) {
@@ -166,17 +176,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     public Boolean changePassword(ChangePasswordRequest request) {
         User user = this.getById(RequestUtil.getUserId());
 
-        if (Objects.isNull(user)) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_EXIST);
-        }
-
-        if (user.getDeleted()) {
-            throw new BusinessException(ErrorCodeEnum.USER_DELETED);
-        }
-
-        if (!Objects.equals(0, user.getState())) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_ACTIVE);
-        }
+        this.checkUser(user);
 
         // 校验原密码是否正确
         String oldPasswordHex = DigestUtils.md5Hex(request.getOldPassword() + user.getLoginName());
@@ -199,17 +199,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     public Boolean resetPassword(String userId) {
         User user = this.getById(userId);
 
-        if (Objects.isNull(user)) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_EXIST);
-        }
-
-        if (user.getDeleted()) {
-            throw new BusinessException(ErrorCodeEnum.USER_DELETED);
-        }
-
-        if (!Objects.equals(0, user.getState())) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_ACTIVE);
-        }
+        this.checkUser(user);
 
         return this.update(Wrappers.<User>lambdaUpdate()
                 .eq(User::getId, user.getId())
@@ -228,13 +218,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
         String userId = RequestUtil.getUserId();
         User user = this.getById(userId);
-        if (user.getDeleted()) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_EXIST);
-        }
 
-        if (!Objects.equals(0, user.getState())) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_ACTIVE);
-        }
+        this.checkUser(user);
 
         BeanUtils.copyProperties(request, user);
         user.setLoginName(request.getPhoneNumber());
@@ -246,6 +231,64 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         String cacheKey = redisUtil.generateRedisKey(RedisKeyConst.API, RedisKeyConst.REQUEST_USER + userId);
         redisUtil.del(cacheKey);
         return true;
+    }
+
+    @Override
+    public String sendEmailValidCode(EmailSendRequest request) {
+        captchaService.checkCaptcha(request.getCaptchaRequest());
+
+        User user = this.getByLoginName(request.getLoginName());
+        this.checkUser(user);
+
+        if (StringUtils.isBlank(user.getEmail())) {
+            throw new BusinessException(ErrorCodeEnum.EMAIL_NOT_EXIST);
+        }
+
+        CaptchaResponse captcha = captchaService.generateNumberCaptcha(6);
+        EmailSendCodeRequest sendRequest = new EmailSendCodeRequest();
+        sendRequest.setCaptcha(captcha);
+        sendRequest.setProperties(emailServerProperties);
+        sendRequest.setEmailAddress(user.getEmail());
+
+        // 发送验证码
+        SendUtil.sendEmailValidCode(sendRequest);
+
+        return captcha.getCaptchaId();
+    }
+
+    @Override
+    public Boolean forgetPassword(ForgetPasswordRequest request) {
+        captchaService.checkCaptcha(request.getCaptchaRequest());
+
+        User user = this.getByLoginName(request.getLoginName());
+
+        this.checkUser(user);
+
+        String password = DigestUtils.md5Hex(request.getNewPassword() + user.getLoginName());
+        return this.update(Wrappers.<User>lambdaUpdate()
+                .eq(User::getId, user.getId())
+                .set(User::getLoginPassword, password));
+    }
+
+    /**
+     * @Description: 检查用户状态
+     * @param user 用户信息
+     * @Return: void
+     * @Author: wangzehui
+     * @Date: 2026/6/5 14:43
+     */
+    private void checkUser(User user) {
+        if (Objects.isNull(user)) {
+            throw new BusinessException(ErrorCodeEnum.USER_NOT_EXIST);
+        }
+
+        if (user.getDeleted()) {
+            throw new BusinessException(ErrorCodeEnum.USER_DELETED);
+        }
+
+        if (!Objects.equals(0, user.getState())) {
+            throw new BusinessException(ErrorCodeEnum.USER_NOT_ACTIVE);
+        }
     }
 }
 

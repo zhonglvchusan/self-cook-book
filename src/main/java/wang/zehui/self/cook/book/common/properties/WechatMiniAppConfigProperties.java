@@ -1,4 +1,4 @@
-package wang.zehui.self.cook.book.common.config;
+package wang.zehui.self.cook.book.common.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

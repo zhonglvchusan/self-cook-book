@@ -116,5 +116,23 @@ public interface IUserService extends IService<User> {
      * @Date: 2026/6/4 15:39
      */
     Boolean updateUser(ApiUserUpdateRequest request);
+
+    /**
+     * @Description: 发送邮箱验证码
+     * @param request 邮箱发送请求
+     * @Return: java.lang.String
+     * @Author: wangzehui
+     * @Date: 2026/6/5 14:39
+     */
+    String sendEmailValidCode(EmailSendRequest request);
+
+    /**
+     * @Description: 忘记密码修改密码
+     * @param request 忘记密码请求
+     * @Return: java.lang.Boolean
+     * @Author: wangzehui
+     * @Date: 2026/6/5 14:47
+     */
+    Boolean forgetPassword(ForgetPasswordRequest request);
 }
 

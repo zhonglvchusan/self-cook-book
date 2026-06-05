@@ -6,6 +6,8 @@ import wang.zehui.self.cook.book.common.annoation.CheckEnum;
 import wang.zehui.self.cook.book.common.annoation.SchemaEnum;
 import wang.zehui.self.cook.book.common.enums.GenderEnum;
 
+import javax.validation.constraints.Pattern;
+
 /**
  * @Author wangzehui
  * @Date 2026/6/4 15:34
@@ -33,5 +35,6 @@ public class ApiUserUpdateRequest {
     private String phoneNumber;
 
     @Schema(description = "邮箱地址")
+    @Pattern(regexp = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$", message = "邮箱格式错误")
     private String email;
 }

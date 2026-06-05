@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import wang.zehui.self.cook.book.common.annoation.NoNeedLogin;
 import wang.zehui.self.cook.book.domain.request.ApiUserUpdateRequest;
-import wang.zehui.self.cook.book.domain.request.ChangePasswordRequest;
+import wang.zehui.self.cook.book.domain.request.EmailSendRequest;
+import wang.zehui.self.cook.book.domain.request.ForgetPasswordRequest;
 import wang.zehui.self.cook.book.domain.response.ResponseDTO;
 import wang.zehui.self.cook.book.domain.response.UserInfoResponse;
 import wang.zehui.self.cook.book.service.IUserService;
@@ -37,7 +39,14 @@ public class ApiUserController {
 
     @PostMapping("/change/password")
     @Operation(summary = "修改密码 @author wangzh")
-    public ResponseDTO<Boolean> changePassword(@RequestBody @Validated ChangePasswordRequest request) {
-        return ResponseDTO.success(userService.changePassword(request));
+    public ResponseDTO<Boolean> changePassword(@RequestBody @Validated ForgetPasswordRequest request) {
+        return ResponseDTO.success(userService.forgetPassword(request));
+    }
+
+    @PostMapping("/email/valid/code")
+    @Operation(summary = "发送忘记密码邮箱验证码 @author wangzh")
+    @NoNeedLogin
+    public ResponseDTO<String> sendEmailValidCode(@RequestBody @Validated EmailSendRequest request) {
+        return ResponseDTO.success(ResponseDTO.SUCCESS_CODE, userService.sendEmailValidCode(request));
     }
 }

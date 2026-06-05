@@ -135,6 +135,27 @@ public class CaptchaServiceImpl implements ICaptchaService {
         return true;
     }
 
+    @Override
+    public CaptchaResponse generateNumberCaptcha(Integer count) {
+        if (Objects.isNull(count) || count <= 0) {
+            throw new IllegalArgumentException("验证码长度必须大于0");
+        }
+        StringBuilder captcha = new StringBuilder();
+        for (int i = 0; i< count; i++) {
+            captcha.append(RandomUtils.nextInt(0, 10));
+        }
+
+        CaptchaResponse response = new CaptchaResponse();
+        response.setCaptchaId(UUID.randomUUID().toString().replaceAll("-", ""));
+        response.setCaptchaCode(captcha.toString());
+        response.setExpireSeconds(EXPIRE_SECONDS);
+
+        String redisKey = redisUtil.generateRedisKey(RedisKeyConst.CAPTCHA, response.getCaptchaId());
+        redisUtil.set(redisKey, captcha.toString(), EXPIRE_SECONDS);
+
+        return response;
+    }
+
     public static void main(String[] args) {
         System.out.println(new CaptchaServiceImpl().generateCaptcha().getCaptchaBase64Image());
     }

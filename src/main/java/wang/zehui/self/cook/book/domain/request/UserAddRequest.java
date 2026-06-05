@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  * @Author wangzehui
@@ -45,6 +46,7 @@ public class UserAddRequest {
     private String phoneNumber;
 
     @Schema(description = "邮箱地址")
+    @Pattern(regexp = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$", message = "邮箱格式错误")
     private String email;
 
     @Schema(description = "账号状态 0正常 1禁用")

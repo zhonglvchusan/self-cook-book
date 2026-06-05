@@ -9,7 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import wang.zehui.self.cook.book.common.config.WechatMiniAppConfigProperties;
+import wang.zehui.self.cook.book.common.properties.WechatMiniAppConfigProperties;
 import wang.zehui.self.cook.book.common.consts.RedisKeyConst;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.SystemEnvironment;
