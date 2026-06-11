@@ -1,8 +1,11 @@
 package wang.zehui.self.cook.book.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.domain.entity.Restaurant;
 import wang.zehui.self.cook.book.domain.request.RestaurantRequest;
+import wang.zehui.self.cook.book.domain.request.RestaurantSearchRequest;
+import wang.zehui.self.cook.book.domain.response.RestaurantListResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantResponse;
 
 /**
@@ -46,6 +49,15 @@ public interface IRestaurantService extends IService<Restaurant> {
      * @Author: wangzehui
      * @Date: 2026/6/3 15:32
      */
-    Boolean deleteRestaurant();
+    Boolean deleteRestaurant(String restaurantId);
+
+    /**
+     * @Description: 获取餐厅分页列表
+     * @param request 查询参数
+     * @Return: wang.zehui.self.cook.book.common.domain.PageResult<wang.zehui.self.cook.book.domain.response.RestaurantListResponse>
+     * @Author: wangzehui
+     * @Date: 2026/6/8 11:19
+     */
+    PageResult<RestaurantListResponse> getRestaurantPageList(RestaurantSearchRequest request);
 }
 

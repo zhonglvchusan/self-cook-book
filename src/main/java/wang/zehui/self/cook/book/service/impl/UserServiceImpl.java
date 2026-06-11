@@ -32,6 +32,7 @@ import wang.zehui.self.cook.book.service.IUserService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * (User)表服务实现类
@@ -268,6 +269,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         return this.update(Wrappers.<User>lambdaUpdate()
                 .eq(User::getId, user.getId())
                 .set(User::getLoginPassword, password));
+    }
+
+    @Override
+    public Map<String, User> getUserMap(List<String> userIds) {
+        List<User> users = this.listByIds(userIds);
+        return ConvertUtil.convertMap(users, User::getId, Function.identity());
     }
 
     /**

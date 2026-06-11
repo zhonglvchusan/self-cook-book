@@ -1,19 +1,31 @@
 package wang.zehui.self.cook.book.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
+import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
+import wang.zehui.self.cook.book.common.utils.ConvertUtil;
 import wang.zehui.self.cook.book.common.utils.RequestUtil;
 import wang.zehui.self.cook.book.dao.RestaurantDao;
 import wang.zehui.self.cook.book.domain.entity.Restaurant;
+import wang.zehui.self.cook.book.domain.entity.User;
 import wang.zehui.self.cook.book.domain.request.RestaurantRequest;
+import wang.zehui.self.cook.book.domain.request.RestaurantSearchRequest;
+import wang.zehui.self.cook.book.domain.response.RestaurantListResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantResponse;
 import wang.zehui.self.cook.book.service.IRestaurantService;
 import org.springframework.stereotype.Service;
+import wang.zehui.self.cook.book.service.IUserService;
 
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -24,6 +36,9 @@ import java.util.Objects;
  */
 @Service
 public class RestaurantServiceImpl extends ServiceImpl<RestaurantDao, Restaurant> implements IRestaurantService {
+
+    @Resource
+    private IUserService userService;
 
     @Override
     public RestaurantResponse getRestaurantInfo(String restaurantId) {
@@ -84,13 +99,37 @@ public class RestaurantServiceImpl extends ServiceImpl<RestaurantDao, Restaurant
     }
 
     @Override
-    public Boolean deleteRestaurant() {
-        Restaurant restaurant = this.getRestaurantByUserId(RequestUtil.getUserId());
+    public Boolean deleteRestaurant(String restaurantId) {
+        Restaurant restaurant = this.getById(restaurantId);
         if (Objects.isNull(restaurant)) {
             return true;
         }
 
         return this.removeById(restaurant);
+    }
+
+    @Override
+    public PageResult<RestaurantListResponse> getRestaurantPageList(RestaurantSearchRequest request) {
+        Page<Restaurant> page = new Page<>(request.getPageNum(), request.getPageSize());
+
+        LambdaQueryWrapper<Restaurant> queryWrapper = Wrappers.<Restaurant>lambdaQuery()
+                .like(!StringUtils.isBlank(request.getRestaurantName()), Restaurant::getRestaurantName, request.getRestaurantName())
+                .like(!StringUtils.isBlank(request.getRestaurantDescription()), Restaurant::getRestaurantDescription, request.getRestaurantDescription());
+        this.page(page, queryWrapper);
+
+        List<Restaurant> records = page.getRecords();
+        if (CollectionUtils.isEmpty(records)) {
+            return PageResult.of(page, PageResult.easyBeanCopyFunction(RestaurantListResponse::new));
+        }
+        List<String> userIds = ConvertUtil.convertList(records, Restaurant::getRestaurantUserId);
+        Map<String, User> userMap = userService.getUserMap(userIds);
+
+        return PageResult.of(page, restaurant -> {
+            RestaurantListResponse response = new RestaurantListResponse();
+            BeanUtils.copyProperties(restaurant, response);
+            response.setRestaurantUserName(userMap.get(restaurant.getRestaurantUserId()).getRealName());
+            return response;
+        });
     }
 }
 

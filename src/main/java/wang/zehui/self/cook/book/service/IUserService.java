@@ -8,6 +8,9 @@ import wang.zehui.self.cook.book.domain.request.*;
 import wang.zehui.self.cook.book.domain.response.UserInfoResponse;
 import wang.zehui.self.cook.book.domain.response.UserListResponse;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * (User)表服务接口
  *
@@ -134,5 +137,14 @@ public interface IUserService extends IService<User> {
      * @Date: 2026/6/5 14:47
      */
     Boolean forgetPassword(ForgetPasswordRequest request);
+
+    /**
+     * @Description: 获取用户id映射列表
+     * @param userIds 用户id列表
+     * @Return: java.util.Map<java.lang.String,wang.zehui.self.cook.book.domain.entity.User>
+     * @Author: wangzehui
+     * @Date: 2026/6/8 11:50
+     */
+    Map<String, User> getUserMap(List<String> userIds);
 }
 

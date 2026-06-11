@@ -46,11 +46,6 @@ public class Restaurant {
     private String restaurantUserId;
     
     /**
-     * 租户id
-     */
-    private String tenantId;
-    
-    /**
      * 是否删除
      */
     private Boolean deleted;

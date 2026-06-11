@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.Resource;
+
 /**
  * mp插件配置
  *
@@ -19,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MybatisPlusConfig {
 
-    @Autowired
-    private CustomTenantHandler customTenantHandler;
+    //@Resource
+    //private CustomTenantHandler customTenantHandler;
 
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
@@ -30,9 +32,9 @@ public class MybatisPlusConfig {
         // 防止全表更新与删除插件
         interceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
         // 多租户插件
-        TenantLineInnerInterceptor tenantLineInnerInterceptor = new TenantLineInnerInterceptor();
-        tenantLineInnerInterceptor.setTenantLineHandler(customTenantHandler);
-        interceptor.addInnerInterceptor(tenantLineInnerInterceptor);
+        // TenantLineInnerInterceptor tenantLineInnerInterceptor = new TenantLineInnerInterceptor();
+        // tenantLineInnerInterceptor.setTenantLineHandler(customTenantHandler);
+        // interceptor.addInnerInterceptor(tenantLineInnerInterceptor);
         return interceptor;
     }
 }
