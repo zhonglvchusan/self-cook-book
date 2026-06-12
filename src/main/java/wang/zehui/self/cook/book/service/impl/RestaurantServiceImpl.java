@@ -113,6 +113,7 @@ public class RestaurantServiceImpl extends ServiceImpl<RestaurantDao, Restaurant
         Page<Restaurant> page = new Page<>(request.getPageNum(), request.getPageSize());
 
         LambdaQueryWrapper<Restaurant> queryWrapper = Wrappers.<Restaurant>lambdaQuery()
+                .eq(Restaurant::getRestaurantExternalFlag, true)
                 .like(!StringUtils.isBlank(request.getRestaurantName()), Restaurant::getRestaurantName, request.getRestaurantName())
                 .like(!StringUtils.isBlank(request.getRestaurantDescription()), Restaurant::getRestaurantDescription, request.getRestaurantDescription());
         this.page(page, queryWrapper);

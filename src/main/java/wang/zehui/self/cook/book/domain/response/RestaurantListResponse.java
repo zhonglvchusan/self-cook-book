@@ -33,6 +33,9 @@ public class RestaurantListResponse {
     @Schema(description = "店铺管理人员名称")
     private String restaurantUserName;
 
+    @Schema(description = "是否对外开放")
+    private Boolean restaurantExternalFlag;
+
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 

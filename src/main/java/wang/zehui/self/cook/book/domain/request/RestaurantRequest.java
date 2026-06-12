@@ -24,4 +24,7 @@ public class RestaurantRequest {
 
     @Schema(description = "餐厅背景图地址")
     private String restaurantBackgroundUrl;
+
+    @Schema(description = "是否对外开放")
+    private Boolean restaurantExternalFlag;
 }
