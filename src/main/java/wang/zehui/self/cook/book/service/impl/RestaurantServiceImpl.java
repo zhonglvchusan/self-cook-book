@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
+import wang.zehui.self.cook.book.common.enums.UserAdminFlagEnum;
 import wang.zehui.self.cook.book.common.utils.ConvertUtil;
 import wang.zehui.self.cook.book.common.utils.RequestUtil;
 import wang.zehui.self.cook.book.dao.RestaurantDao;
@@ -113,9 +114,13 @@ public class RestaurantServiceImpl extends ServiceImpl<RestaurantDao, Restaurant
         Page<Restaurant> page = new Page<>(request.getPageNum(), request.getPageSize());
 
         LambdaQueryWrapper<Restaurant> queryWrapper = Wrappers.<Restaurant>lambdaQuery()
-                .eq(Restaurant::getRestaurantExternalFlag, true)
                 .like(!StringUtils.isBlank(request.getRestaurantName()), Restaurant::getRestaurantName, request.getRestaurantName())
                 .like(!StringUtils.isBlank(request.getRestaurantDescription()), Restaurant::getRestaurantDescription, request.getRestaurantDescription());
+
+        if (Objects.equals(UserAdminFlagEnum.USER.getCode(), RequestUtil.getUserRequest().getAdminFlag())) {
+            queryWrapper.eq(Restaurant::getRestaurantExternalFlag, true);
+        }
+
         this.page(page, queryWrapper);
 
         List<Restaurant> records = page.getRecords();
@@ -128,7 +133,7 @@ public class RestaurantServiceImpl extends ServiceImpl<RestaurantDao, Restaurant
         return PageResult.of(page, restaurant -> {
             RestaurantListResponse response = new RestaurantListResponse();
             BeanUtils.copyProperties(restaurant, response);
-            response.setRestaurantUserName(userMap.get(restaurant.getRestaurantUserId()).getRealName());
+            response.setRestaurantUserName(userMap.get(restaurant.getRestaurantUserId()).getNickname());
             return response;
         });
     }
