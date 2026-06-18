@@ -137,5 +137,19 @@ public class RestaurantServiceImpl extends ServiceImpl<RestaurantDao, Restaurant
             return response;
         });
     }
+
+    @Override
+    public void checkRestaurant(String restaurantId) {
+        Restaurant restaurant = this.getById(restaurantId);
+        if (Objects.isNull(restaurant)) {
+            throw new BusinessException(ErrorCodeEnum.RESTAURANT_NOT_EXIST);
+        }
+        if (restaurant.getDeleted()) {
+            throw new BusinessException(ErrorCodeEnum.RESTAURANT_NOT_EXIST);
+        }
+        if (!RequestUtil.getUserRequest().getIsAdmin() && !restaurant.getRestaurantUserId().equals(RequestUtil.getUserId())) {
+            throw new BusinessException(ErrorCodeEnum.RESTAURANT_NOT_PERMISSION);
+        }
+    }
 }
 

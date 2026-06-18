@@ -59,5 +59,13 @@ public interface IRestaurantService extends IService<Restaurant> {
      * @Date: 2026/6/8 11:19
      */
     PageResult<RestaurantListResponse> getRestaurantPageList(RestaurantSearchRequest request);
+
+    /**
+     * @Description: 检查餐厅状态
+     * @param restaurantId 餐厅id
+     * @Author: wangzehui
+     * @Date: 2026/6/18 14:31
+     */
+    void checkRestaurant(String restaurantId);
 }
 
