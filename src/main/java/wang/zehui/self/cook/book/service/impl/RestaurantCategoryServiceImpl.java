@@ -62,7 +62,8 @@ public class RestaurantCategoryServiceImpl extends ServiceImpl<RestaurantCategor
         Page<RestaurantCategory> page = new Page<>(request.getPageNum(), request.getPageSize());
 
         LambdaQueryWrapper<RestaurantCategory> queryWrapper = Wrappers.<RestaurantCategory>lambdaQuery()
-                .eq(!StringUtils.isBlank(request.getRestaurantId()), RestaurantCategory::getRestaurantId, request.getRestaurantId());
+                .eq(!StringUtils.isBlank(request.getRestaurantId()), RestaurantCategory::getRestaurantId, request.getRestaurantId())
+                .orderByAsc(RestaurantCategory::getSort);
 
         this.page(page, queryWrapper);
 
