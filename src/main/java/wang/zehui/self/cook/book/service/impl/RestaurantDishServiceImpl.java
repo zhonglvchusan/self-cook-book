@@ -62,7 +62,9 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
         this.saveOrUpdate(dish);
 
         // 菜品保存完毕后，增加餐厅餐品数量
-        restaurantService.updateRestaurantDishNumber(dish.getRestaurantId(), OperationTypeEnum.PLUS.getValue());
+        if (StringUtils.isBlank(request.getId())) {
+            restaurantService.updateRestaurantDishNumber(dish.getRestaurantId(), OperationTypeEnum.PLUS.getValue());
+        }
 
         return true;
     }
