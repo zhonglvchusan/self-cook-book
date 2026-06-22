@@ -41,5 +41,15 @@ public interface IRestaurantCategoryService extends IService<RestaurantCategory>
      * @Date: 2026/6/15 14:54
      */
     Boolean deleteCategory(String id);
+
+    /**
+     * @Description: 检查餐厅分类状态
+     * @param restaurantId 餐厅id
+     * @param restaurantCategoryId 餐厅分类id
+     * @Return: void
+     * @Author: wangzehui
+     * @Date: 2026/6/22 14:43
+     */
+    void checkCategory(String restaurantId, String restaurantCategoryId);
 }
 

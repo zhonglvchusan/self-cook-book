@@ -30,6 +30,7 @@ public enum ErrorCodeEnum implements BaseEnum {
     PHONE_NUMBER_EXIST(11003, "手机号已存在"),
     EMAIL_NOT_EXIST(11004, "邮箱不存在"),
     USER_RESTAURANT_NOT_EXIST(11005, "您当前还没有开餐厅，请投资一家吧~"),
+    CATEGORY_NOT_EXIST(11006, "餐厅分类不存在"),
 
 
     // 系统错误50000起

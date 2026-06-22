@@ -80,5 +80,19 @@ public class RestaurantCategoryServiceImpl extends ServiceImpl<RestaurantCategor
         restaurantService.checkRestaurant(category.getRestaurantId());
         return this.removeById(id);
     }
+
+    @Override
+    public void checkCategory(String restaurantId, String restaurantCategoryId) {
+        RestaurantCategory restaurantCategory = this.getById(restaurantCategoryId);
+        if (Objects.isNull(restaurantCategory)) {
+            throw new BusinessException(ErrorCodeEnum.CATEGORY_NOT_EXIST);
+        }
+        if (restaurantCategory.getDeleted()) {
+            throw new BusinessException(ErrorCodeEnum.CATEGORY_NOT_EXIST);
+        }
+        if (!restaurantCategory.getRestaurantId().equals(restaurantId)) {
+            throw new BusinessException(ErrorCodeEnum.CATEGORY_NOT_EXIST);
+        }
+    }
 }
 

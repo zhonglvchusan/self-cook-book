@@ -67,5 +67,15 @@ public interface IRestaurantService extends IService<Restaurant> {
      * @Date: 2026/6/18 14:31
      */
     void checkRestaurant(String restaurantId);
+
+    /**
+     * @Description: 添加餐厅餐品数量
+     * @param restaurantId 餐厅id
+     * @param operation 增加/删除
+     * @Return: void
+     * @Author: wangzehui
+     * @Date: 2026/6/22 14:56
+     */
+    void updateRestaurantDishNumber(String restaurantId, Integer operation);
 }
 

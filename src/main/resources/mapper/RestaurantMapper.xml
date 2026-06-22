@@ -15,6 +15,23 @@
         <result property="updateUserId" column="update_user_id" jdbcType="VARCHAR"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
+    <update id="updateDishNumber">
+        UPDATE t_restaurant
+        <set>
+            <choose>
+                <when test="operation == 0">
+                    dish_number = dish_number + 1
+                </when>
+                <when test="operation == 1">
+                    dish_number = dish_number - 1
+                </when>
+                <otherwise>
+                    dish_number = dish_number
+                </otherwise>
+            </choose>
+        </set>
+        WHERE id = #{restaurantId} AND dish_number >= 0 AND deleted = 0
+    </update>
 
 </mapper>
 

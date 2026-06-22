@@ -41,6 +41,9 @@ public class RestaurantServiceImpl extends ServiceImpl<RestaurantDao, Restaurant
     @Resource
     private IUserService userService;
 
+    @Resource
+    private RestaurantDao restaurantDao;
+
     @Override
     public RestaurantResponse getRestaurantInfo(String restaurantId) {
         Restaurant restaurant;
@@ -150,6 +153,11 @@ public class RestaurantServiceImpl extends ServiceImpl<RestaurantDao, Restaurant
         if (!RequestUtil.getUserRequest().getIsAdmin() && !restaurant.getRestaurantUserId().equals(RequestUtil.getUserId())) {
             throw new BusinessException(ErrorCodeEnum.RESTAURANT_NOT_PERMISSION);
         }
+    }
+
+    @Override
+    public void updateRestaurantDishNumber(String restaurantId, Integer operation) {
+        restaurantDao.updateDishNumber(restaurantId, operation);
     }
 }
 
