@@ -28,7 +28,7 @@ public class ApiRestaurantController {
 
     @GetMapping
     @Operation(summary = "获取餐厅信息 @author wangzh")
-    public ResponseDTO<RestaurantResponse> getRestaurantInfo(String restaurantId) {
+    public ResponseDTO<RestaurantResponse> getRestaurantInfo(@RequestParam(required = false) String restaurantId) {
         return ResponseDTO.success(restaurantService.getRestaurantInfo(restaurantId));
     }
 
