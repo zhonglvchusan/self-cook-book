@@ -3,12 +3,14 @@ package wang.zehui.self.cook.book.controller.admin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.BeanUtils;
 import org.springframework.validation.annotation.Validated;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.domain.request.ChangePasswordRequest;
 import wang.zehui.self.cook.book.domain.request.UserAddRequest;
 import wang.zehui.self.cook.book.domain.request.UserListRequest;
 import wang.zehui.self.cook.book.domain.request.UserUpdateRequest;
+import wang.zehui.self.cook.book.domain.response.ApiUserInfoResponse;
 import wang.zehui.self.cook.book.domain.response.ResponseDTO;
 import wang.zehui.self.cook.book.domain.response.UserInfoResponse;
 import wang.zehui.self.cook.book.domain.response.UserListResponse;
@@ -68,8 +70,11 @@ public class UserController {
 
     @GetMapping("/{userId}")
     @Operation(summary = "获取用户详情 @author wangzh")
-    public ResponseDTO<UserInfoResponse> getUserInfo(@PathVariable String userId) {
-        return ResponseDTO.success(userService.getUserInfo(userId));
+    public ResponseDTO<ApiUserInfoResponse> getUserInfo(@PathVariable String userId) {
+        UserInfoResponse userInfo = userService.getUserInfo(userId);
+        ApiUserInfoResponse response = new ApiUserInfoResponse();
+        BeanUtils.copyProperties(userInfo, response);
+        return ResponseDTO.success(response);
     }
 
     @PostMapping("/change/password")
