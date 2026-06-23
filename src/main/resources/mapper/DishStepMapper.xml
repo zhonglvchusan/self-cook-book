@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wang.zehui.self.cook.book.dao.DishStepDao">
+
+    <resultMap type="wang.zehui.self.cook.book.domain.entity.DishStep" id="DishStepMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="dishId" column="dish_id" jdbcType="VARCHAR"/>
+        <result property="stepNumber" column="step_number" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="imageUrl" column="image_url" jdbcType="VARCHAR"/>
+        <result property="duration" column="duration" jdbcType="INTEGER"/>
+        <result property="tip" column="tip" jdbcType="VARCHAR"/>
+        <result property="createUserId" column="create_user_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateUserId" column="update_user_id" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+</mapper>
+

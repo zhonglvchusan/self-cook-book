@@ -31,6 +31,7 @@ public enum ErrorCodeEnum implements BaseEnum {
     EMAIL_NOT_EXIST(11004, "邮箱不存在"),
     USER_RESTAURANT_NOT_EXIST(11005, "您当前还没有开餐厅，请投资一家吧~"),
     CATEGORY_NOT_EXIST(11006, "餐厅分类不存在"),
+    STEP_REPEAT(11007, "步骤重复"),
 
 
     // 系统错误50000起

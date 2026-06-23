@@ -18,7 +18,6 @@ public class UserInfoResponse {
     @Schema(description = "用户id")
     private String id;
 
-
     @Schema(description = "微信openId")
     private String openId;
 

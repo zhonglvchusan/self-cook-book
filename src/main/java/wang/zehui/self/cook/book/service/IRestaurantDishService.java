@@ -5,6 +5,7 @@ import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.domain.entity.RestaurantDish;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishSearchRequest;
+import wang.zehui.self.cook.book.domain.response.RestaurantDishInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishListResponse;
 
 /**
@@ -41,5 +42,14 @@ public interface IRestaurantDishService extends IService<RestaurantDish> {
      * @Date: 2026/6/22 14:37
      */
     PageResult<RestaurantDishListResponse> getDishPageList(RestaurantDishSearchRequest request);
+
+    /**
+     * @Description: 获取菜品详情
+     * @param dishId 菜品id
+     * @Return: wang.zehui.self.cook.book.domain.response.RestaurantDishInfoResponse
+     * @Author: wangzehui
+     * @Date: 2026/6/23 14:52
+     */
+    RestaurantDishInfoResponse getDishInfo(String dishId);
 }
 

@@ -15,7 +15,9 @@ import wang.zehui.self.cook.book.dao.RestaurantDishDao;
 import wang.zehui.self.cook.book.domain.entity.RestaurantDish;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishSearchRequest;
+import wang.zehui.self.cook.book.domain.response.RestaurantDishInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishListResponse;
+import wang.zehui.self.cook.book.service.IDishStepService;
 import wang.zehui.self.cook.book.service.IRestaurantCategoryService;
 import wang.zehui.self.cook.book.service.IRestaurantDishService;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,9 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
     @Resource
     private IRestaurantCategoryService restaurantCategoryService;
 
+    @Resource
+    private IDishStepService dishStepService;
+
     @Override
     @Transactional(rollbackFor = {Exception.class, Error.class, BusinessException.class})
     public Boolean addOrUpdateDish(RestaurantDishRequest request) {
@@ -60,6 +65,11 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
 
         BeanUtils.copyProperties(request, dish, "id");
         this.saveOrUpdate(dish);
+
+        // 基础信息处理完毕后，处理菜品步骤
+        // 先设置菜品id
+        request.getDishStepRequests().forEach(dishStep -> dishStep.setDishId(dish.getId()));
+        dishStepService.addOrUpdateDishStep(request.getDishStepRequests());
 
         // 菜品保存完毕后，增加餐厅餐品数量
         if (StringUtils.isBlank(request.getId())) {
@@ -103,6 +113,23 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
         this.page(page, queryWrapper);
 
         return PageResult.of(page, PageResult.easyBeanCopyFunction(RestaurantDishListResponse::new));
+    }
+
+    @Override
+    public RestaurantDishInfoResponse getDishInfo(String dishId) {
+        RestaurantDish dish = this.getById(dishId);
+
+        if (Objects.isNull(dish)) {
+            throw new BusinessException(ErrorCodeEnum.PARAM_ERROR);
+        }
+
+        RestaurantDishInfoResponse response = new RestaurantDishInfoResponse();
+        BeanUtils.copyProperties(dish, response);
+
+        // 获取菜品步骤
+        response.setDishSteps(dishStepService.getDishSteps(dishId));
+
+        return response;
     }
 }
 

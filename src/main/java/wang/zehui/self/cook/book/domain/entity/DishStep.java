@@ -6,14 +6,14 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 菜品分类菜品表(RestaurantDish)表实体类
+ * 菜品步骤表(DishStep)表实体类
  *
  * @author wangzehui
- * @since 2026-06-22 14:24:43
+ * @since 2026-06-23 14:18:10
  */
 @Data
-@TableName("t_restaurant_dish")
-public class RestaurantDish {
+@TableName("t_dish_step")
+public class DishStep {
 
     /**
      * 主键
@@ -22,52 +22,42 @@ public class RestaurantDish {
     private String id;
 
     /**
-     * 餐厅id
+     * 菜品id
      */
-    private String restaurantId;
+    private String dishId;
 
     /**
-     * 餐厅菜品分类id
+     * 步骤几
      */
-    private String restaurantCategoryId;
+    private Integer stepNumber;
 
     /**
-     * 菜品图片
+     * 步骤标题
      */
-    private String dishImageUrl;
+    private String title;
 
     /**
-     * 菜品名称
+     * 步骤内容
      */
-    private String dishName;
+    private String content;
 
     /**
-     * 菜品描述
+     * 步骤图片
      */
-    private String dishDescription;
+    private String imageUrl;
 
     /**
-     * 菜品销量
+     * 预计耗时(秒)
      */
-    private Integer dishSale;
+    private Integer duration;
 
     /**
-     * 菜品评价等级
+     * 小贴士
      */
-    private Double dishRatingLevel;
+    private String tip;
 
     /**
-     * 菜品价格(积分代替)
-     */
-    private Integer dishPrice;
-
-    /**
-     * 是否删除
-     */
-    private Boolean deleted;
-
-    /**
-     * 创建人id
+     * 创建人
      */
     @TableField(fill = FieldFill.INSERT)
     private String createUserId;
@@ -78,7 +68,7 @@ public class RestaurantDish {
     private LocalDateTime createTime;
 
     /**
-     * 更新人id
+     * 更新人
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateUserId;

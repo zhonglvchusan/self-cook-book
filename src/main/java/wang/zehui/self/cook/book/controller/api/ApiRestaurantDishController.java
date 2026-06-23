@@ -8,6 +8,7 @@ import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishSearchRequest;
 import wang.zehui.self.cook.book.domain.response.ResponseDTO;
+import wang.zehui.self.cook.book.domain.response.RestaurantDishInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishListResponse;
 import wang.zehui.self.cook.book.service.IRestaurantDishService;
 
@@ -43,6 +44,12 @@ public class ApiRestaurantDishController {
     @GetMapping
     public ResponseDTO<PageResult<RestaurantDishListResponse>> getDishPageList(RestaurantDishSearchRequest request) {
         return ResponseDTO.success(restaurantDishService.getDishPageList(request));
+    }
+
+    @Operation(summary = "获取菜品详情 @author wangzh")
+    @GetMapping("/{dishId}")
+    public ResponseDTO<RestaurantDishInfoResponse> getDishInfo(@PathVariable String dishId) {
+        return ResponseDTO.success(restaurantDishService.getDishInfo(dishId));
     }
 }
 
