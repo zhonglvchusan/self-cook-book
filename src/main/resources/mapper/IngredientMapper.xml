@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wang.zehui.self.cook.book.dao.IngredientDao">
+
+    <resultMap type="wang.zehui.self.cook.book.domain.entity.Ingredient" id="IngredientMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="ingredientName" column="ingredient_name" jdbcType="VARCHAR"/>
+        <result property="ingredientImageUrl" column="ingredient_image_url" jdbcType="VARCHAR"/>
+        <result property="ingredientUnit" column="ingredient_unit" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="createUserId" column="create_user_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateUserId" column="update_user_id" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+</mapper>
+
