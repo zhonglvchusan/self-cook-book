@@ -17,11 +17,8 @@ import wang.zehui.self.cook.book.domain.request.RestaurantDishRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishSearchRequest;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishListResponse;
-import wang.zehui.self.cook.book.service.IDishStepService;
-import wang.zehui.self.cook.book.service.IRestaurantCategoryService;
-import wang.zehui.self.cook.book.service.IRestaurantDishService;
+import wang.zehui.self.cook.book.service.*;
 import org.springframework.stereotype.Service;
-import wang.zehui.self.cook.book.service.IRestaurantService;
 
 import javax.annotation.Resource;
 import java.util.Objects;
@@ -44,6 +41,9 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
     @Resource
     private IDishStepService dishStepService;
 
+    @Resource
+    private IDishIngredientService dishIngredientService;
+
     @Override
     @Transactional(rollbackFor = {Exception.class, Error.class, BusinessException.class})
     public Boolean addOrUpdateDish(RestaurantDishRequest request) {
@@ -65,6 +65,11 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
 
         BeanUtils.copyProperties(request, dish, "id");
         this.saveOrUpdate(dish);
+
+        // 基础信息处理完毕后，处理菜品食材
+        // 设置菜品食材
+        request.getDishIngredientRequests().forEach(dishIngredient -> dishIngredient.setDishId(dish.getId()));
+        dishIngredientService.addOrUpdateDishIngredientBatch(request.getDishIngredientRequests());
 
         // 基础信息处理完毕后，处理菜品步骤
         // 先设置菜品id

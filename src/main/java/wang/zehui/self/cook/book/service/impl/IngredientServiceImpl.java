@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.PageResult;
+import wang.zehui.self.cook.book.common.utils.ConvertUtil;
 import wang.zehui.self.cook.book.dao.IngredientDao;
 import wang.zehui.self.cook.book.domain.entity.Ingredient;
 import wang.zehui.self.cook.book.domain.request.IngredientRequest;
@@ -18,9 +19,8 @@ import wang.zehui.self.cook.book.domain.response.IngredientListResponse;
 import wang.zehui.self.cook.book.service.IIngredientService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -72,6 +72,29 @@ public class IngredientServiceImpl extends ServiceImpl<IngredientDao, Ingredient
         this.page(page, queryWrapper);
 
         return PageResult.of(page, PageResult.easyBeanCopyFunction(IngredientListResponse::new));
+    }
+
+    @Override
+    public Map<String, String> getIdMapByIngredientNames(Set<String> ingredientNames) {
+        if (CollectionUtils.isEmpty(ingredientNames)) {
+            return Collections.emptyMap();
+        }
+
+        List<Ingredient> ingredients = this.list(Wrappers.<Ingredient>lambdaQuery()
+                .in(Ingredient::getIngredientName, ingredientNames));
+
+        return ConvertUtil.convertMap(ingredients, Ingredient::getIngredientName, Ingredient::getId);
+    }
+
+    @Override
+    public Map<String, Ingredient> getIngredientMapByIds(Set<String> ingredientIds) {
+        if (CollectionUtils.isEmpty(ingredientIds)) {
+            return Collections.emptyMap();
+        }
+
+        List<Ingredient> ingredients = this.listByIds(ingredientIds);
+
+        return ConvertUtil.convertMap(ingredients, Ingredient::getId, Function.identity());
     }
 
 }

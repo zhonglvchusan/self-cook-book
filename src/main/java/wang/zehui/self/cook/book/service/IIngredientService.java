@@ -8,6 +8,8 @@ import wang.zehui.self.cook.book.domain.request.IngredientSearchRequest;
 import wang.zehui.self.cook.book.domain.response.IngredientListResponse;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 食材表(Ingredient)表服务接口
@@ -44,5 +46,23 @@ public interface IIngredientService extends IService<Ingredient> {
      * @Date: 2026/6/24 10:59
      */
     PageResult<IngredientListResponse> getIngredientPageList(IngredientSearchRequest request);
+
+    /**
+     * @Description: 根据食材名称列表，获取食材名称对应的id
+     * @param ingredientNames 食材名称列表
+     * @Return: java.util.Map<java.lang.String,java.lang.String>
+     * @Author: wangzehui
+     * @Date: 2026/6/29 12:26
+     */
+    Map<String, String> getIdMapByIngredientNames(Set<String> ingredientNames);
+
+    /**
+     * @Description: 获取食材信息
+     * @param ingredientIds 食材id列表
+     * @Return: java.util.Map<java.lang.String,wang.zehui.self.cook.book.domain.entity.Ingredient>
+     * @Author: wangzehui
+     * @Date: 2026/7/2 10:45
+     */
+    Map<String, Ingredient> getIngredientMapByIds(Set<String> ingredientIds);
 }
 

@@ -40,6 +40,9 @@ public class RestaurantDishRequest {
     @NotNull(message = "菜品价格不能为空")
     private Integer dishPrice;
 
+    @Schema(description = "菜品食材")
+    private List<DishIngredientRequest> dishIngredientRequests;
+
     @Schema(description = "菜品步骤")
     private List<DishStepRequest> dishStepRequests;
 }
