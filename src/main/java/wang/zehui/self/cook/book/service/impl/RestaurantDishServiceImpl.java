@@ -131,6 +131,9 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
         RestaurantDishInfoResponse response = new RestaurantDishInfoResponse();
         BeanUtils.copyProperties(dish, response);
 
+        // 获取菜品食材
+        response.setDishIngredients(dishIngredientService.getDishIngredients(dishId));
+
         // 获取菜品步骤
         response.setDishSteps(dishStepService.getDishSteps(dishId));
 

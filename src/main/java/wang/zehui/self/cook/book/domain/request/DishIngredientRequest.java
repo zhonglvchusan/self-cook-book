@@ -1,5 +1,6 @@
 package wang.zehui.self.cook.book.domain.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import wang.zehui.self.cook.book.common.annoation.CheckEnum;
@@ -19,6 +20,7 @@ public class DishIngredientRequest {
     private String id;
 
     @Schema(description = "菜品id")
+    @JsonIgnore
     private String dishId;
 
     @Schema(description = "食材名称")

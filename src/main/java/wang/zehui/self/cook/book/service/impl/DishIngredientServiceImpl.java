@@ -3,6 +3,7 @@ package wang.zehui.self.cook.book.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
@@ -20,10 +21,7 @@ import wang.zehui.self.cook.book.service.IIngredientService;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,7 +38,7 @@ public class DishIngredientServiceImpl extends ServiceImpl<DishIngredientDao, Di
     @Resource
     private IIngredientService ingredientService;
 
-    private final static String regex = "\\d+|.+";
+    private final static String regex = "(^\\d+)(.+)$|^(.+)$";
     private final static Pattern pattern = Pattern.compile(regex);
 
     @Override
@@ -60,7 +58,11 @@ public class DishIngredientServiceImpl extends ServiceImpl<DishIngredientDao, Di
                     ingredientRequest.setIngredientName(dishIngredientRequest.getIngredientName());
                     Matcher matcher = pattern.matcher(dishIngredientRequest.getSpec());
                     if (matcher.find()) {
-                        ingredientRequest.setIngredientUnit(matcher.group(1));
+                        String unit = matcher.group(2);
+                        if (StringUtils.isBlank(unit)) {
+                            unit = "个";
+                        }
+                        ingredientRequest.setIngredientUnit(unit);
                     }
                     ingredientRequest.setIngredientImageUrl(dishIngredientRequest.getIngredientImageUrl());
                     ingredientRequest.setType(IngredientTypeEnum.USER_INGREDIENT.getValue());
@@ -82,11 +84,17 @@ public class DishIngredientServiceImpl extends ServiceImpl<DishIngredientDao, Di
                 .map(dishIngredientRequest -> {
                     DishIngredient dishIngredient = new DishIngredient();
                     BeanUtils.copyProperties(dishIngredientRequest, dishIngredient);
-                    dishIngredient.setDishId(ingredientIdsMap.get(dishIngredientRequest.getIngredientName()));
+                    dishIngredient.setIngredientId(ingredientIdsMap.get(dishIngredientRequest.getIngredientName()));
                     Matcher matcher = pattern.matcher(dishIngredientRequest.getSpec());
                     if (matcher.find()) {
-                        dishIngredient.setAmount(new BigDecimal(matcher.group(0)));
-                        dishIngredient.setUnit(matcher.group(1));
+                        if (StringUtils.isNumeric(matcher.group(1))) {
+                            dishIngredient.setAmount(new BigDecimal(matcher.group(1)));
+                            dishIngredient.setUnit(StringUtils.isBlank(matcher.group(2)) ? null : matcher.group(2));
+                        } else if (!StringUtils.isBlank(matcher.group(1))) {
+                            dishIngredient.setUnit(matcher.group(1));
+                        } else {
+                            dishIngredient.setUnit(StringUtils.isBlank(matcher.group(3)) ? null : matcher.group(3));
+                        }
                     }
                     return dishIngredient;
                 }).collect(Collectors.toList());
@@ -110,7 +118,12 @@ public class DishIngredientServiceImpl extends ServiceImpl<DishIngredientDao, Di
                     dishIngredientResponse.setIngredientName(ingredient.getIngredientName());
                     dishIngredientResponse.setIngredientImageUrl(ingredient.getIngredientImageUrl());
                     dishIngredientResponse.setType(ingredient.getType());
-                    dishIngredientResponse.setSpec(dishIngredient.getAmount() + dishIngredient.getUnit());
+                    if (Objects.isNull(dishIngredient.getAmount())) {
+                        dishIngredientResponse.setSpec(dishIngredient.getUnit());
+                    } else {
+                        dishIngredientResponse.setSpec(dishIngredient.getAmount().stripTrailingZeros().toPlainString() + dishIngredient.getUnit());
+                    }
+
                     return dishIngredientResponse;
                 }).collect(Collectors.toList());
     }

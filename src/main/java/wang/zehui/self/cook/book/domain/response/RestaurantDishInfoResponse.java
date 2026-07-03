@@ -39,6 +39,9 @@ public class RestaurantDishInfoResponse {
     @Schema(description = "菜品价格")
     private Integer dishPrice;
 
+    @Schema(description = "菜品食材")
+    private List<DishIngredientResponse> dishIngredients;
+
     @Schema(description = "菜品步骤")
     private List<DishStepListResponse> dishSteps;
 
