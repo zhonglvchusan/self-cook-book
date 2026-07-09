@@ -112,7 +112,7 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
         }
 
         LambdaQueryWrapper<RestaurantDish> queryWrapper = Wrappers.<RestaurantDish>lambdaQuery()
-                .eq(RestaurantDish::getRestaurantCategoryId, request.getRestaurantCategoryId())
+                .eq(!StringUtils.isBlank(request.getRestaurantCategoryId()), RestaurantDish::getRestaurantCategoryId, request.getRestaurantCategoryId())
                 .like(!StringUtils.isBlank(request.getDishName()), RestaurantDish::getDishName, request.getDishName());
 
         this.page(page, queryWrapper);
