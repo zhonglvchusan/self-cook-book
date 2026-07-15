@@ -1,6 +1,6 @@
 # Dockerfile
 # 指定镜像
-FROM openjdk:8-jre
+FROM eclipse-temurin:8-jre
 
 # 挂载项目日志与文件上传本地目录
 VOLUME ["/mnt/log/self-cook-book/"]
