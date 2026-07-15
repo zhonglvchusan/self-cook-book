@@ -168,7 +168,6 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>wang.zehui.self.cook.book.SelfCookbookApiApplication</mainClass>
-                    <skip>true</skip>
                 </configuration>
                 <executions>
                     <execution>
