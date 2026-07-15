@@ -6,7 +6,7 @@ FROM eclipse-temurin:8-jre
 VOLUME ["/mnt/log/self-cook-book/"]
 
 # 复制jar包到容器中
-COPY ./self-cook-book/target/self-cookbook-api-1.0.0.jar /self-cookbook-api.jar
+COPY target/self-cookbook-api-1.0.0.jar /self-cookbook-api.jar
 
 # 暴露端口
 EXPOSE 8281
