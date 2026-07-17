@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -49,6 +50,24 @@ public class PageResult<T> {
         pageResult.setList(page.getRecords().stream()
                 .map(function)
                 .collect(Collectors.toList()));
+
+        return pageResult;
+    }
+
+    /**
+     * @Description: 转换空分页结果
+     * @param page 分页对象
+     * @Return: wang.zehui.self.cook.book.common.domain.PageResult<T>
+     * @Author: wangzehui
+     * @Date: 2026/7/16 14:45
+     */
+    public static <T, E> PageResult<T> of(Page<E> page) {
+        PageResult<T> pageResult = new PageResult<>();
+        pageResult.setPageNum(page.getCurrent());
+        pageResult.setPageSize(page.getSize());
+        pageResult.setTotal(page.getTotal());
+        pageResult.setPages(page.getPages());
+        pageResult.setList(new ArrayList<>());
 
         return pageResult;
     }

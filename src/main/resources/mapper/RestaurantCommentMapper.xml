@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wang.zehui.self.cook.book.dao.RestaurantCommentDao">
+
+    <resultMap type="wang.zehui.self.cook.book.domain.entity.RestaurantComment" id="RestaurantCommentMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="restaurantId" column="restaurant_id" jdbcType="VARCHAR"/>
+        <result property="dishId" column="dish_id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="likeNumber" column="like_number" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id" jdbcType="VARCHAR"/>
+        <result property="rootId" column="root_id" jdbcType="VARCHAR"/>
+        <result property="deleted" column="deleted" jdbcType="VARCHAR"/>
+        <result property="createUserId" column="create_user_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateUserId" column="update_user_id" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <select id="getTopRepliesByRootIds" resultType="wang.zehui.self.cook.book.domain.entity.RestaurantComment">
+        SELECT *
+        FROM (
+            SELECT
+            c.*,
+            ROW_NUMBER() OVER (
+                PARTITION BY c.root_id
+            ) AS rn,
+            GREATEST(
+                COUNT(*) OVER (PARTITION BY c.root_id) - 3, 0
+            ) AS remaining_count
+            FROM t_restaurant_comment c
+            WHERE c.deleted = 0
+            AND c.root_id IN
+            <foreach collection="rootIds"
+                 item="rootId"
+                 open="("
+                 separator=","
+                 close=")">
+                #{rootId}
+            </foreach>
+            ) t
+        WHERE t.rn &lt;= 3
+    </select>
+
+</mapper>
+

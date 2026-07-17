@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
 import wang.zehui.self.cook.book.common.enums.OperationTypeEnum;
+import wang.zehui.self.cook.book.common.utils.ConvertUtil;
 import wang.zehui.self.cook.book.dao.RestaurantDishDao;
 import wang.zehui.self.cook.book.domain.entity.RestaurantDish;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishRequest;
@@ -21,7 +23,11 @@ import wang.zehui.self.cook.book.service.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * 菜品分类菜品表(RestaurantDish)表服务实现类
@@ -138,6 +144,17 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
         response.setDishSteps(dishStepService.getDishSteps(dishId));
 
         return response;
+    }
+
+    @Override
+    public Map<String, RestaurantDish> getDishMapByIds(List<String> dishIds) {
+        if (CollectionUtils.isEmpty(dishIds)) {
+            return Collections.emptyMap();
+        }
+
+        List<RestaurantDish> restaurantDishes = this.listByIds(dishIds);
+
+        return ConvertUtil.convertMap(restaurantDishes, RestaurantDish::getId, Function.identity());
     }
 }
 

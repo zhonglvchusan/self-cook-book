@@ -8,6 +8,9 @@ import wang.zehui.self.cook.book.domain.request.RestaurantDishSearchRequest;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishListResponse;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 菜品分类菜品表(RestaurantDish)表服务接口
  *
@@ -51,5 +54,14 @@ public interface IRestaurantDishService extends IService<RestaurantDish> {
      * @Date: 2026/6/23 14:52
      */
     RestaurantDishInfoResponse getDishInfo(String dishId);
+
+    /**
+     * @Description: 通过id获取菜品信息
+     * @param dishIds 菜品id
+     * @Return: java.util.Map<java.lang.String,wang.zehui.self.cook.book.domain.entity.RestaurantDish>
+     * @Author: wangzehui
+     * @Date: 2026/7/17 10:27
+     */
+    Map<String, RestaurantDish> getDishMapByIds(List<String> dishIds);
 }
 
