@@ -62,4 +62,7 @@ public class CommentListResponse {
 
     @Schema(description = "查看剩余xx条回复")
     private Integer remainingCount;
+
+    @Schema(description = "当前用户是否点赞")
+    private Boolean likeStatus;
 }

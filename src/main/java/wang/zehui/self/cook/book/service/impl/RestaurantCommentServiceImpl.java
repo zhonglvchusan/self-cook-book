@@ -21,11 +21,8 @@ import wang.zehui.self.cook.book.domain.request.AddCommentRequest;
 import wang.zehui.self.cook.book.domain.request.CommentSearchRequest;
 import wang.zehui.self.cook.book.domain.request.MoreCommentRequest;
 import wang.zehui.self.cook.book.domain.response.CommentListResponse;
-import wang.zehui.self.cook.book.service.IRestaurantCommentService;
+import wang.zehui.self.cook.book.service.*;
 import org.springframework.stereotype.Service;
-import wang.zehui.self.cook.book.service.IRestaurantDishService;
-import wang.zehui.self.cook.book.service.IRestaurantService;
-import wang.zehui.self.cook.book.service.IUserService;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -52,6 +49,9 @@ public class RestaurantCommentServiceImpl extends ServiceImpl<RestaurantCommentD
 
     @Resource
     private IUserService userService;
+
+    @Resource
+    private IUserLikeService userLikeService;
 
     @Override
     public Boolean addComment(AddCommentRequest request) {
@@ -143,6 +143,9 @@ public class RestaurantCommentServiceImpl extends ServiceImpl<RestaurantCommentD
             });
         }
 
+        String userId = RequestUtil.getUserId();
+        List<String> likeIds = userLikeService.getLikeIds(userId, CommentTypeEnum.COMMENT.getValue(), new HashSet<>(rootIds));
+
         return PageResult.of(page, comment -> {
             CommentListResponse response = new CommentListResponse();
             BeanUtils.copyProperties(comment, response);
@@ -153,6 +156,7 @@ public class RestaurantCommentServiceImpl extends ServiceImpl<RestaurantCommentD
             if (!CollectionUtils.isEmpty(childrenCommentResponseMap.get(comment.getId()))) {
                 response.setRemainingCount(childrenCommentResponseMap.get(comment.getId()).get(0).getRemainingCount());
             }
+            response.setLikeStatus(likeIds.contains(comment.getId()));
             return response;
         });
     }
