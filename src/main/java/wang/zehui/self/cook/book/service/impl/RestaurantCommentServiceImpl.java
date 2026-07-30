@@ -95,6 +95,11 @@ public class RestaurantCommentServiceImpl extends ServiceImpl<RestaurantCommentD
         List<String> rootIds = ConvertUtil.convertList(records, RestaurantComment::getId);
         List<RestaurantComment> topRepliesByRootIds = restaurantCommentDao.getTopRepliesByRootIds(rootIds);
 
+        // 处理用户是否点赞
+        HashSet<String> queryLikeCommentIds = new HashSet<>(rootIds);
+        queryLikeCommentIds.addAll(ConvertUtil.convertList(topRepliesByRootIds, RestaurantComment::getId));
+        List<String> likeIds = userLikeService.getLikeIds(RequestUtil.getUserId(), CommentTypeEnum.COMMENT.getValue(), queryLikeCommentIds);
+
         // 菜品id
         List<String> dishIds = ConvertUtil.convertList(records, RestaurantComment::getDishId);
         Map<String, RestaurantDish> dishMap = restaurantDishService.getDishMapByIds(dishIds);
@@ -137,14 +142,12 @@ public class RestaurantCommentServiceImpl extends ServiceImpl<RestaurantCommentD
                         childrenCommentResponse.setReplyUserId(Objects.isNull(parentComment) ? "" : parentComment.getUserId());
                         childrenCommentResponse.setReplyUserName(Objects.isNull(parentComment) ? "" : userMap.get(parentComment.getUserId()).getNickname());
                     }
+                    childrenCommentResponse.setLikeStatus(likeIds.contains(childrenComment.getId()));
                     return childrenCommentResponse;
                 }).collect(Collectors.toList());
                 childrenCommentResponseMap.put(rootId, childrenResponses);
             });
         }
-
-        String userId = RequestUtil.getUserId();
-        List<String> likeIds = userLikeService.getLikeIds(userId, CommentTypeEnum.COMMENT.getValue(), new HashSet<>(rootIds));
 
         return PageResult.of(page, comment -> {
             CommentListResponse response = new CommentListResponse();

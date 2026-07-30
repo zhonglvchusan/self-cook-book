@@ -18,6 +18,11 @@
         <result property="updateUserId" column="update_user_id" jdbcType="VARCHAR"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
+    <update id="addOrReduceLikeNumber">
+        UPDATE t_restaurant_comment
+        SET like_number = like_number + #{likeNumber}
+        WHERE id = #{commentId}
+    </update>
     <select id="getTopRepliesByRootIds" resultType="wang.zehui.self.cook.book.domain.entity.RestaurantComment">
         SELECT *
         FROM (

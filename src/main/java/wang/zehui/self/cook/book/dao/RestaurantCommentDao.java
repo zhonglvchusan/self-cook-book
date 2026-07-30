@@ -24,5 +24,15 @@ public interface RestaurantCommentDao extends BaseMapper<RestaurantComment> {
      * @Date: 2026/7/16 15:44
      */
     List<RestaurantComment> getTopRepliesByRootIds(@Param("rootIds") List<String> rootIds);
+
+    /**
+     * @Description: 增加或减少评论点赞数
+     * @param commentId 评论id
+     * @param likeNumber 增加/减少的点赞数
+     * @Return: java.lang.Boolean
+     * @Author: wangzehui
+     * @Date: 2026/7/30 14:06
+     */
+    Boolean addOrReduceLikeNumber(@Param("commentId") String commentId, @Param("likeNumber") Integer likeNumber);
 }
 
