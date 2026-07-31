@@ -24,6 +24,7 @@ import wang.zehui.self.cook.book.domain.request.AdminDishSearchRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishSearchRequest;
 import wang.zehui.self.cook.book.domain.response.AdminDishListResponse;
+import wang.zehui.self.cook.book.domain.response.RestaurantDishConfigListResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishListResponse;
 import wang.zehui.self.cook.book.service.*;
@@ -173,6 +174,7 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
         }
 
         RestaurantDish dish = this.getById(dishId);
+        restaurantService.checkRestaurant(dish.getRestaurantId());
         // 上架
         if (Objects.equals(LaunchTypeEnum.NORMAL.getValue(), launchType)) {
             if (Objects.equals(dish.getLaunchFlag(), LaunchTypeEnum.ADMIN_TAKE_DOWN.getValue()) && !RequestUtil.getUserRequest().getIsAdmin()) {
@@ -186,6 +188,19 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
         return this.update(Wrappers.<RestaurantDish>lambdaUpdate()
                 .eq(RestaurantDish::getId, dishId)
                 .set(RestaurantDish::getLaunchFlag, launchType));
+    }
+
+    @Override
+    public PageResult<RestaurantDishConfigListResponse> getDishConfigPageList(RestaurantDishSearchRequest request) {
+        Page<RestaurantDish> page = new Page<>(request.getPageNum(), request.getPageSize());
+
+        LambdaQueryWrapper<RestaurantDish> queryWrapper = Wrappers.<RestaurantDish>lambdaQuery()
+                .eq(!StringUtils.isBlank(request.getRestaurantCategoryId()), RestaurantDish::getRestaurantCategoryId, request.getRestaurantCategoryId())
+                .like(!StringUtils.isBlank(request.getDishName()), RestaurantDish::getDishName, request.getDishName());
+
+        this.page(page, queryWrapper);
+
+        return PageResult.of(page, PageResult.easyBeanCopyFunction(RestaurantDishConfigListResponse::new));
     }
 
     @Override

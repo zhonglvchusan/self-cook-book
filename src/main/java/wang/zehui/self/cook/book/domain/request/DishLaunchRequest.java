@@ -6,6 +6,8 @@ import wang.zehui.self.cook.book.common.annoation.CheckEnum;
 import wang.zehui.self.cook.book.common.annoation.SchemaEnum;
 import wang.zehui.self.cook.book.common.enums.LaunchTypeEnum;
 
+import javax.validation.constraints.Max;
+
 /**
  * @Author wangzehui
  * @Date 2026/7/31 10:27
@@ -18,5 +20,6 @@ public class DishLaunchRequest {
 
     @SchemaEnum(value = LaunchTypeEnum.class, description = "上架状态")
     @CheckEnum(value = LaunchTypeEnum.class, message = "上架状态错误")
+    @Max(value = 1, message = "上架状态错误")
     private Integer launchType;
 }

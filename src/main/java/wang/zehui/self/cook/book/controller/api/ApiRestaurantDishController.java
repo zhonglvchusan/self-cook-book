@@ -5,9 +5,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import wang.zehui.self.cook.book.common.domain.PageResult;
+import wang.zehui.self.cook.book.domain.request.DishLaunchRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishSearchRequest;
 import wang.zehui.self.cook.book.domain.response.ResponseDTO;
+import wang.zehui.self.cook.book.domain.response.RestaurantDishConfigListResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishListResponse;
 import wang.zehui.self.cook.book.service.IRestaurantDishService;
@@ -50,6 +52,18 @@ public class ApiRestaurantDishController {
     @GetMapping("/{dishId}")
     public ResponseDTO<RestaurantDishInfoResponse> getDishInfo(@PathVariable String dishId) {
         return ResponseDTO.success(restaurantDishService.getDishInfo(dishId));
+    }
+
+    @Operation(summary = "修改菜品上架状态 @author wangzh")
+    @PutMapping("/{dishId}/launch")
+    public ResponseDTO<Boolean> updateDishLaunchStatus(@RequestBody @Validated DishLaunchRequest request) {
+        return ResponseDTO.success(restaurantDishService.updateDishLaunchStatus(request.getDishId(), request.getLaunchType()));
+    }
+
+    @Operation(summary = "获取菜品管理分页列表 @author wangzh")
+    @GetMapping("/config")
+    public ResponseDTO<PageResult<RestaurantDishConfigListResponse>> getDishConfigPageList(RestaurantDishSearchRequest request) {
+        return ResponseDTO.success(restaurantDishService.getDishConfigPageList(request));
     }
 }
 

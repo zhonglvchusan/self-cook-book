@@ -7,6 +7,7 @@ import wang.zehui.self.cook.book.domain.request.AdminDishSearchRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishSearchRequest;
 import wang.zehui.self.cook.book.domain.response.AdminDishListResponse;
+import wang.zehui.self.cook.book.domain.response.RestaurantDishConfigListResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishListResponse;
 
@@ -75,6 +76,15 @@ public interface IRestaurantDishService extends IService<RestaurantDish> {
      * @Date: 2026/7/31 9:51
      */
     Boolean updateDishLaunchStatus(String dishId, Integer launchType);
+
+    /**
+     * @Description: 获取管理菜品时的菜品信息
+     * @param request 菜品搜索参数
+     * @Return: wang.zehui.self.cook.book.common.domain.PageResult<wang.zehui.self.cook.book.domain.response.RestaurantDishConfigListResponse>
+     * @Author: wangzehui
+     * @Date: 2026/7/31 15:08
+     */
+    PageResult<RestaurantDishConfigListResponse> getDishConfigPageList(RestaurantDishSearchRequest request);
 
     /******************************************** 以下为后台方法 **************************************/
 
