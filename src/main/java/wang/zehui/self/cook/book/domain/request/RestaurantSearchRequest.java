@@ -13,6 +13,9 @@ import wang.zehui.self.cook.book.common.domain.PageRequest;
 @EqualsAndHashCode(callSuper = true)
 public class RestaurantSearchRequest extends PageRequest {
 
+    @Schema(description = "餐厅id")
+    private String id;
+
     @Schema(description = "餐厅名称")
     private String restaurantName;
 

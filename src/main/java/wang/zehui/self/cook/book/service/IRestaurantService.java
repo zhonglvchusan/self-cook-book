@@ -8,6 +8,9 @@ import wang.zehui.self.cook.book.domain.request.RestaurantSearchRequest;
 import wang.zehui.self.cook.book.domain.response.RestaurantListResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantResponse;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * 餐厅信息表(Restaurant)表服务接口
  *
@@ -77,5 +80,14 @@ public interface IRestaurantService extends IService<Restaurant> {
      * @Date: 2026/6/22 14:56
      */
     void updateRestaurantDishNumber(String restaurantId, Integer operation);
+
+    /**
+     * @Description: 获取餐厅信息
+     * @param restaurantIds 餐厅id集合
+     * @Return: java.util.Map<java.lang.String,wang.zehui.self.cook.book.domain.entity.Restaurant>
+     * @Author: wangzehui
+     * @Date: 2026/7/30 15:01
+     */
+    Map<String, Restaurant> getRestaurantMap(Set<String> restaurantIds);
 }
 

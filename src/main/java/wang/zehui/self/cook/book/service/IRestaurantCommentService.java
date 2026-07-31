@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.domain.entity.RestaurantComment;
 import wang.zehui.self.cook.book.domain.request.AddCommentRequest;
+import wang.zehui.self.cook.book.domain.request.AdminCommentSearchRequest;
 import wang.zehui.self.cook.book.domain.request.CommentSearchRequest;
 import wang.zehui.self.cook.book.domain.request.MoreCommentRequest;
+import wang.zehui.self.cook.book.domain.response.AdminCommentListResponse;
 import wang.zehui.self.cook.book.domain.response.CommentListResponse;
 
 /**
@@ -51,5 +53,16 @@ public interface IRestaurantCommentService extends IService<RestaurantComment> {
      * @Date: 2026/7/16 14:24
      */
     PageResult<CommentListResponse> getMoreChildComment(MoreCommentRequest request);
+
+    /******************************************** 以下为后台方法 **************************************/
+
+    /**
+     * @Description: 获取评论列表
+     * @param request
+     * @Return: wang.zehui.self.cook.book.common.domain.PageResult<wang.zehui.self.cook.book.domain.response.AdminCommentListResponse>
+     * @Author: wangzehui
+     * @Date: 2026/7/30 14:44
+     */
+    PageResult<AdminCommentListResponse> getAdminCommentList(AdminCommentSearchRequest request);
 }
 

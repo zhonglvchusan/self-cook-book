@@ -14,12 +14,15 @@ import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
 import wang.zehui.self.cook.book.common.utils.ConvertUtil;
 import wang.zehui.self.cook.book.common.utils.RequestUtil;
 import wang.zehui.self.cook.book.dao.RestaurantCommentDao;
+import wang.zehui.self.cook.book.domain.entity.Restaurant;
 import wang.zehui.self.cook.book.domain.entity.RestaurantComment;
 import wang.zehui.self.cook.book.domain.entity.RestaurantDish;
 import wang.zehui.self.cook.book.domain.entity.User;
 import wang.zehui.self.cook.book.domain.request.AddCommentRequest;
+import wang.zehui.self.cook.book.domain.request.AdminCommentSearchRequest;
 import wang.zehui.self.cook.book.domain.request.CommentSearchRequest;
 import wang.zehui.self.cook.book.domain.request.MoreCommentRequest;
+import wang.zehui.self.cook.book.domain.response.AdminCommentListResponse;
 import wang.zehui.self.cook.book.domain.response.CommentListResponse;
 import wang.zehui.self.cook.book.service.*;
 import org.springframework.stereotype.Service;
@@ -200,6 +203,39 @@ public class RestaurantCommentServiceImpl extends ServiceImpl<RestaurantCommentD
                 childrenCommentResponse.setReplyUserName(Objects.isNull(parentComment) ? "" : userMap.get(parentComment.getUserId()).getNickname());
             }
             return childrenCommentResponse;
+        });
+    }
+
+    @Override
+    public PageResult<AdminCommentListResponse> getAdminCommentList(AdminCommentSearchRequest request) {
+        LambdaQueryWrapper<RestaurantComment> queryWrapper = Wrappers.<RestaurantComment>lambdaQuery()
+                .eq(!StringUtils.isBlank(request.getRestaurantId()), RestaurantComment::getRestaurantId, request.getRestaurantId())
+                .ge(!StringUtils.isBlank(request.getStartTime()), RestaurantComment::getCreateTime, request.getStartTime())
+                .le(!StringUtils.isBlank(request.getEndTime()), RestaurantComment::getCreateTime, request.getEndTime());
+
+        Page<RestaurantComment> page = new Page<>(request.getPageNum(), request.getPageSize());
+        this.page(page, queryWrapper);
+
+        List<RestaurantComment> records = page.getRecords();
+        if (CollectionUtils.isEmpty(records)) {
+            return PageResult.of(page);
+        }
+
+        List<String> restaurantIds = ConvertUtil.convertList(records, RestaurantComment::getRestaurantId);
+        Map<String, Restaurant> restaurantMap = restaurantService.getRestaurantMap(new HashSet<>(restaurantIds));
+        List<String> dishIds = ConvertUtil.convertList(records, RestaurantComment::getDishId);
+        Map<String, RestaurantDish> dishMap = restaurantDishService.getDishMapByIds(dishIds);
+        List<String> userIds = ConvertUtil.convertList(records, RestaurantComment::getUserId);
+        Map<String, User> userMap = userService.getUserMap(userIds);
+
+        return PageResult.of(page, comment -> {
+            AdminCommentListResponse response = new AdminCommentListResponse();
+            BeanUtils.copyProperties(comment, response);
+            response.setRestaurantName(Objects.isNull(restaurantMap.get(comment.getRestaurantId())) ? "" : restaurantMap.get(comment.getRestaurantId()).getRestaurantName());
+            response.setDishName(Objects.isNull(dishMap.get(comment.getDishId())) ? "" : dishMap.get(comment.getDishId()).getDishName());
+            response.setUserName(Objects.isNull(userMap.get(comment.getUserId())) ? "" : userMap.get(comment.getUserId()).getNickname());
+
+            return response;
         });
     }
 

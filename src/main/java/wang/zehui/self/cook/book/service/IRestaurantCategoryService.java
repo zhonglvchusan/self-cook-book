@@ -7,6 +7,9 @@ import wang.zehui.self.cook.book.domain.request.RestaurantCategoryRequest;
 import wang.zehui.self.cook.book.domain.response.RestaurantCategoryListResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantCategorySearchRequest;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * 餐厅分类表(RestaurantCategory)表服务接口
  *
@@ -51,5 +54,14 @@ public interface IRestaurantCategoryService extends IService<RestaurantCategory>
      * @Date: 2026/6/22 14:43
      */
     void checkCategory(String restaurantId, String restaurantCategoryId);
+
+    /**
+     * @Description: 获取分类map
+     * @param restaurantCategoryIds 分类id集合
+     * @Return: java.util.Map<java.lang.String,wang.zehui.self.cook.book.domain.entity.RestaurantCategory>
+     * @Author: wangzehui
+     * @Date: 2026/7/31 9:38
+     */
+    Map<String, RestaurantCategory> getCategoryMap(Set<String> restaurantCategoryIds);
 }
 

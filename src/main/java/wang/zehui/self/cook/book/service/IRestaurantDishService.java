@@ -3,8 +3,10 @@ package wang.zehui.self.cook.book.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.domain.entity.RestaurantDish;
+import wang.zehui.self.cook.book.domain.request.AdminDishSearchRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishSearchRequest;
+import wang.zehui.self.cook.book.domain.response.AdminDishListResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishListResponse;
 
@@ -63,5 +65,27 @@ public interface IRestaurantDishService extends IService<RestaurantDish> {
      * @Date: 2026/7/17 10:27
      */
     Map<String, RestaurantDish> getDishMapByIds(List<String> dishIds);
+
+    /**
+     * @Description: 更新菜品上架状态
+     * @param dishId 菜品id
+     * @param launchType {@link wang.zehui.self.cook.book.common.enums.LaunchTypeEnum}
+     * @Return: java.lang.Boolean
+     * @Author: wangzehui
+     * @Date: 2026/7/31 9:51
+     */
+    Boolean updateDishLaunchStatus(String dishId, Integer launchType);
+
+    /******************************************** 以下为后台方法 **************************************/
+
+    /**
+     * @Description: 获取平台餐品列表
+     * @param request 搜索参数
+     * @Return: wang.zehui.self.cook.book.common.domain.PageResult<wang.zehui.self.cook.book.domain.response.AdminDishListResponse>
+     * @Author: wangzehui
+     * @Date: 2026/7/30 15:32
+     */
+    PageResult<AdminDishListResponse> getAdminDishPageList(AdminDishSearchRequest request);
+
 }
 

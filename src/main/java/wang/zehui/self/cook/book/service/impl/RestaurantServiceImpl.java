@@ -25,9 +25,8 @@ import org.springframework.stereotype.Service;
 import wang.zehui.self.cook.book.service.IUserService;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * 餐厅信息表(Restaurant)表服务实现类
@@ -117,6 +116,7 @@ public class RestaurantServiceImpl extends ServiceImpl<RestaurantDao, Restaurant
         Page<Restaurant> page = new Page<>(request.getPageNum(), request.getPageSize());
 
         LambdaQueryWrapper<Restaurant> queryWrapper = Wrappers.<Restaurant>lambdaQuery()
+                .eq(!StringUtils.isBlank(request.getId()), Restaurant::getId, request.getId())
                 .like(!StringUtils.isBlank(request.getRestaurantName()), Restaurant::getRestaurantName, request.getRestaurantName())
                 .like(!StringUtils.isBlank(request.getRestaurantDescription()), Restaurant::getRestaurantDescription, request.getRestaurantDescription());
 
@@ -158,6 +158,16 @@ public class RestaurantServiceImpl extends ServiceImpl<RestaurantDao, Restaurant
     @Override
     public void updateRestaurantDishNumber(String restaurantId, Integer operation) {
         restaurantDao.updateDishNumber(restaurantId, operation);
+    }
+
+    @Override
+    public Map<String, Restaurant> getRestaurantMap(Set<String> restaurantIds) {
+        if (CollectionUtils.isEmpty(restaurantIds)) {
+            return Collections.emptyMap();
+        }
+
+        List<Restaurant> restaurants = this.listByIds(restaurantIds);
+        return ConvertUtil.convertMap(restaurants, Restaurant::getId, Function.identity());
     }
 }
 

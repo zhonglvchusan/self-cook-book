@@ -62,6 +62,11 @@ public class RestaurantDish {
     private Integer dishPrice;
 
     /**
+     * 上架状态 {@link wang.zehui.self.cook.book.common.enums.LaunchTypeEnum}
+     */
+    private Integer launchFlag;
+
+    /**
      * 是否删除
      */
     private Boolean deleted;

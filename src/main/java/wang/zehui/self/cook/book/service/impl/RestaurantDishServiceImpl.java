@@ -11,22 +11,26 @@ import org.springframework.transaction.annotation.Transactional;
 import wang.zehui.self.cook.book.common.domain.BusinessException;
 import wang.zehui.self.cook.book.common.domain.PageResult;
 import wang.zehui.self.cook.book.common.enums.ErrorCodeEnum;
+import wang.zehui.self.cook.book.common.enums.LaunchTypeEnum;
 import wang.zehui.self.cook.book.common.enums.OperationTypeEnum;
 import wang.zehui.self.cook.book.common.utils.ConvertUtil;
+import wang.zehui.self.cook.book.common.utils.RequestUtil;
 import wang.zehui.self.cook.book.dao.RestaurantDishDao;
+import wang.zehui.self.cook.book.domain.entity.Restaurant;
+import wang.zehui.self.cook.book.domain.entity.RestaurantCategory;
 import wang.zehui.self.cook.book.domain.entity.RestaurantDish;
+import wang.zehui.self.cook.book.domain.entity.User;
+import wang.zehui.self.cook.book.domain.request.AdminDishSearchRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishRequest;
 import wang.zehui.self.cook.book.domain.request.RestaurantDishSearchRequest;
+import wang.zehui.self.cook.book.domain.response.AdminDishListResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishInfoResponse;
 import wang.zehui.self.cook.book.domain.response.RestaurantDishListResponse;
 import wang.zehui.self.cook.book.service.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -49,6 +53,9 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
 
     @Resource
     private IDishIngredientService dishIngredientService;
+
+    @Resource
+    private IUserService userService;
 
     @Override
     @Transactional(rollbackFor = {Exception.class, Error.class, BusinessException.class})
@@ -118,6 +125,7 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
         }
 
         LambdaQueryWrapper<RestaurantDish> queryWrapper = Wrappers.<RestaurantDish>lambdaQuery()
+                .eq(RestaurantDish::getLaunchFlag, LaunchTypeEnum.NORMAL.getValue())
                 .eq(!StringUtils.isBlank(request.getRestaurantCategoryId()), RestaurantDish::getRestaurantCategoryId, request.getRestaurantCategoryId())
                 .like(!StringUtils.isBlank(request.getDishName()), RestaurantDish::getDishName, request.getDishName());
 
@@ -155,6 +163,62 @@ public class RestaurantDishServiceImpl extends ServiceImpl<RestaurantDishDao, Re
         List<RestaurantDish> restaurantDishes = this.listByIds(dishIds);
 
         return ConvertUtil.convertMap(restaurantDishes, RestaurantDish::getId, Function.identity());
+    }
+
+    @Override
+    @Transactional(rollbackFor = {Exception.class, Error.class, BusinessException.class})
+    public Boolean updateDishLaunchStatus(String dishId, Integer launchType) {
+        if (launchType == null) {
+            throw new BusinessException(ErrorCodeEnum.PARAM_ERROR);
+        }
+
+        RestaurantDish dish = this.getById(dishId);
+        // 上架
+        if (Objects.equals(LaunchTypeEnum.NORMAL.getValue(), launchType)) {
+            if (Objects.equals(dish.getLaunchFlag(), LaunchTypeEnum.ADMIN_TAKE_DOWN.getValue()) && !RequestUtil.getUserRequest().getIsAdmin()) {
+                throw new BusinessException(ErrorCodeEnum.LAUNCH_TYPE_ERROR);
+            }
+            restaurantService.updateRestaurantDishNumber(dish.getRestaurantId(), OperationTypeEnum.PLUS.getValue());
+        } else {
+            restaurantService.updateRestaurantDishNumber(dish.getRestaurantId(), OperationTypeEnum.SUBTRACT.getValue());
+        }
+
+        return this.update(Wrappers.<RestaurantDish>lambdaUpdate()
+                .eq(RestaurantDish::getId, dishId)
+                .set(RestaurantDish::getLaunchFlag, launchType));
+    }
+
+    @Override
+    public PageResult<AdminDishListResponse> getAdminDishPageList(AdminDishSearchRequest request) {
+        Page<RestaurantDish> page = new Page<>(request.getPageNum(), request.getPageSize());
+
+        LambdaQueryWrapper<RestaurantDish> queryWrapper = Wrappers.<RestaurantDish>lambdaQuery()
+                .eq(!StringUtils.isBlank(request.getId()), RestaurantDish::getId, request.getId())
+                .eq(!Objects.isNull(request.getLaunchFlag()), RestaurantDish::getLaunchFlag, request.getLaunchFlag())
+                .eq(!StringUtils.isBlank(request.getRestaurantId()), RestaurantDish::getRestaurantId, request.getRestaurantId());
+
+        this.page(page, queryWrapper);
+
+        List<RestaurantDish> records = page.getRecords();
+        if (CollectionUtils.isEmpty(records)) {
+            return PageResult.of(page);
+        }
+
+        List<String> restaurantIds = ConvertUtil.convertList(records, RestaurantDish::getRestaurantId);
+        Map<String, Restaurant> restaurantMap = restaurantService.getRestaurantMap(new HashSet<>(restaurantIds));
+        List<String> categoryIds = ConvertUtil.convertList(records, RestaurantDish::getRestaurantCategoryId);
+        Map<String, RestaurantCategory> categoryMap = restaurantCategoryService.getCategoryMap(new HashSet<>(categoryIds));
+        List<String> createUserIds = ConvertUtil.convertList(records, RestaurantDish::getCreateUserId);
+        Map<String, User> createUserMap = userService.getUserMap(createUserIds);
+
+        return PageResult.of(page, dish -> {
+            AdminDishListResponse response = new AdminDishListResponse();
+            BeanUtils.copyProperties(dish, response);
+            response.setRestaurantName(restaurantMap.get(dish.getRestaurantId()).getRestaurantName());
+            response.setRestaurantCategoryName(categoryMap.get(dish.getRestaurantCategoryId()).getCategoryName());
+            response.setCreateUserName(createUserMap.get(dish.getCreateUserId()).getNickname());
+            return response;
+        });
     }
 }
 

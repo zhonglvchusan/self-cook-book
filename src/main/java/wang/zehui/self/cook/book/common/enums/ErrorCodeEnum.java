@@ -32,6 +32,8 @@ public enum ErrorCodeEnum implements BaseEnum {
     USER_RESTAURANT_NOT_EXIST(11005, "您当前还没有开餐厅，请投资一家吧~"),
     CATEGORY_NOT_EXIST(11006, "餐厅分类不存在"),
     STEP_REPEAT(11007, "步骤重复"),
+    
+    LAUNCH_TYPE_ERROR(12001, "上架失败，被管理员下架，请联系客服处理"),
 
 
     // 系统错误50000起
